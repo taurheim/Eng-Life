@@ -1,0 +1,52 @@
+public void run() {
+        
+        long lastTime = System.nanoTime(); //Current time in nano seconds
+        double nsPerTick = 1000000000D/60D; //Nanoseconds per tick: 1 second/60 frames
+        
+        int ticks = 0; // Current Updates
+        int fps = 0; // Current fps
+        
+        long lastTimer = System.currentTimeMillis();
+        double delta = 0;
+        
+        init();
+        while(running){
+            //Update the current time
+            long now = System.nanoTime();
+
+            //Delta is the time in TICKS since last tick: (current ns - last ns / amount of ns in one tick)           
+            delta += (now-lastTime)/nsPerTick;
+
+            //Update lastTime to reflect this latest tick
+            lastTime = now;
+            
+            //If shouldRender is true, draw a frame. If this starts as true it will never become false
+            boolean shouldRender = false;
+            
+            //If it has been longer than nsPerTick milliseconds since the last tick, tick.
+            while(delta>=1){
+                ticks++;
+                tick();
+                delta-=1; //Resets delta to essentially 0 without losing a bunch of decimal places
+                shouldRender = true;
+            }
+            
+            if(shouldRender){
+            fps++;
+            render();
+            }
+
+            //If a second has passed
+            if((System.currentTimeMillis() - lastTimer) >= 1000){
+                level.spawn();
+                lastTimer += 1000;
+                debug(DebugLevel.INFO,ticks+"-"+fps);
+                fps = 0;
+                ticks = 0;
+                
+        if(player.hp<=0){
+            this.running=false;
+        }
+            }
+        }
+    }
