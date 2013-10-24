@@ -19,6 +19,9 @@ class Player(pygame.sprite.Sprite):
         self.image, self.rect = load_image('character1.png', -1)
         
         #playerSurface = pygame.image.load('character1.png').convert()
-        self.X = X
-        self.Y = Y
+
+        self.rect = pygame.Rect(X,Y,50,50) 
         return
+    def didMove(self, x, y): #Amount that Player moved
+        
+        self.rect.move_ip(x, y) #Moves the rect in place
