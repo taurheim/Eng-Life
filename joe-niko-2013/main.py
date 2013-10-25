@@ -25,9 +25,9 @@ class Main:
         pygame.init() #Initialize PyGame
         self.screen = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
         
-        self.background = pygame.Surface(self.screen.get_size())
-        self.background = self.background.convert()
-        self.background.fill((255, 250, 250))
+        #self.background = pygame.Surface(self.screen.get_size())
+        #self.background = self.background.convert()
+        #self.background.fill((255, 250, 250))
 
         
         self.screen.blit(self.background, (0,0))
