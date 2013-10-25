@@ -65,12 +65,16 @@ class Main:
                 elif event.type == pygame.KEYDOWN:          # check for key presses          
                     if event.key == pygame.K_LEFT:        # left arrow turns left
                         self.pressed_left = True
+                        self.guy.changeSprite('left')
                     elif event.key == pygame.K_RIGHT:     # right arrow turns right
                         self.pressed_right = True
+                        self.guy.changeSprite('right')
                     elif event.key == pygame.K_UP:        # up arrow goes up
                         self.pressed_up = True
+                        self.guy.changeSprite('up')
                     elif event.key == pygame.K_DOWN:     # down arrow goes down
                         self.pressed_down = True
+                        self.guy.changeSprite('down')
                 elif event.type == pygame.KEYUP:            # check for key releases
                     if event.key == pygame.K_LEFT:        # left arrow turns left
                         self.pressed_left = False
