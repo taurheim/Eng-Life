@@ -13,7 +13,7 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 
 
-running = True #If running is true, the game will play
+
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 # Init function:
@@ -28,9 +28,9 @@ class Main:
         self.background.fill((255, 250, 250))
 
         
-        self.screen.blit(self.background, (0,0))
-        self.guy = player.Player(300,300)
-        self.sprites = pygame.sprite.RenderPlain(self.guy)
+        #self.screen.blit(self.background, (0,0))
+        #self.guy = player.Player(300,300)
+        #self.sprites = pygame.sprite.RenderPlain(self.guy)
         
 
         
@@ -39,35 +39,33 @@ class Main:
     ## Tick clock
     ## Check for user inputs
     def game_loop(self):
+        self.running = True #If running is true, the game will play
         self.framecount = 0 #how many frames have elapsed (resets every second)
+        self.total_frames = 0 #Total frames since start
         
-        
-        while running:
-            tick_timer.tick(60)
-            self.framecount+=1
-            total_frames =0
+        while self.running:
 
-            self.screen.blit(self.background, (0, 0)) #Draw background
-            self.sprites.draw(self.screen)          #Draw sprites
-            pygame.display.flip()                   #Make it happen
+            tick_timer.tick(60) #tick
+            self.framecount+=1 #Count frames
             
+  #          self.screen.blit(self.background, (0, 0)) #Draw background
+ #           self.sprites.draw(self.screen)          #Draw sprites
+#            pygame.display.flip()                   #Make it happen
 
-            ##Event Handling (not sure if this is how we'll actually do it, just testing)
-            keys = pygame.key.get_pressed()
-            print keys[pygame.K_DOWN]
-            print pygame.key.get_focused()
-            if keys[pygame.K_DOWN]:                     #NONE OF THIS IS ACTUALLY WORKING
-                print "moving"
-                self.guy.didMove(0,1)
-            
+            #Check for inputs
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.running = False #Quit Game
+                    pygame.quit()
+                    return False
+                pygame.display.update()
  
             
             if(self.framecount==60):
                 self.framecount=0
-                total_frames+=1
-                print total_frames,"--",pygame.time.get_ticks()
-            
-            
+                self.total_frames += 1
+                print self.total_frames,"--",pygame.time.get_ticks()
+
 #Run the game loop
 MainObject = Main()
 MainObject.game_loop()
