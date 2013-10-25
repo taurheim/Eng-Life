@@ -8,7 +8,6 @@ pygame.init()
 #import shit
 
 #GAME SETTINGS
-FPS = 60
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 pressed_down = False
