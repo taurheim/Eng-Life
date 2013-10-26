@@ -16,11 +16,11 @@ def load_image(name, colorkey=None):
 class Player(pygame.sprite.Sprite):
     def __init__(self, X, Y):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('character1.png', -1)
+        self.image, self.rect = load_image('character3.png', -1)
         
-        #playerSurface = pygame.image.load('character1.png').convert()
+        #playerSurface = pygame.image.load('character2.png').convert()
 
-        self.rect = pygame.Rect(X,Y,50,50) 
+        self.rect = pygame.Rect(X,Y,100,100) 
         return
     def didMove(self, x, y): #Amount that Player moved
         

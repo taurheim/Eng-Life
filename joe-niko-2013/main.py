@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 import pygame
-import player
+import player,projectile
 
 pygame.init()
 #import shit
@@ -37,7 +37,6 @@ class Main:
         self.pressed_up = False
         self.pressed_left = False
         self.pressed_right = False
-
         
     # Main loop:
     ## Check if the game is still running, otherwise close game
@@ -84,6 +83,10 @@ class Main:
                         self.pressed_up = False
                     elif event.key == pygame.K_DOWN:     # down arrow goes down
                         self.pressed_down = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),1)
+                    self.sprites.add(pygame.sprite.RenderPlain(new_projectile))
+                    
 
                 #Now, make the guy move based on the values of pressed_*
                         
@@ -95,8 +98,9 @@ class Main:
                 self.guy.didMove(-3,0)
             if self.pressed_right:
                 self.guy.didMove(3,0)
-            
- 
+
+            #Update movement of all sprites in the game
+            self.sprites.update()
             
             if(self.framecount==60):
                 self.framecount=0
