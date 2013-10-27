@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 import pygame
-import player,projectile
+import player,projectile,physics
 
 pygame.init()
 #import shit
@@ -23,20 +23,35 @@ tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~1
 class Main:
     def __init__(self):
         pygame.init() #Initialize PyGame
+
+
+        
         self.screen = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
         
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((255, 250, 250))
 
-        
+        self.Physics = physics.Physics(self.background) #Initialize physics engine
+
+        self.obstacle = pygame.Surface((100,100)) #Random green obstacle for testing
+        self.obstacle = self.obstacle.convert()
+        self.obstacle.fill((0, 255, 0))
         self.screen.blit(self.background, (0,0))
+        self.background.blit(self.obstacle, (100,100))
+
+        self.Physics.addBody(pygame.Rect(100,100,100,100))
+        
+        
+        
+        
         self.guy = player.Player(300,300)
         self.sprites = pygame.sprite.RenderPlain(self.guy)
         self.pressed_down = False
         self.pressed_up = False
         self.pressed_left = False
         self.pressed_right = False
+
         
     # Main loop:
     ## Check if the game is still running, otherwise close game
@@ -52,8 +67,8 @@ class Main:
             tick_timer.tick(60) #tick
             self.framecount+=1 #Count frames
             self.screen.blit(self.background, (0, 0)) #Draw background
-            self.sprites.draw(self.screen)          #Draw sprites
-            pygame.display.flip()                   #Make it happen
+            self.sprites.draw(self.screen)            #Draw sprites
+            pygame.display.flip()                     #Make it happen
 
             #Check for inputs
             for event in pygame.event.get():
@@ -90,13 +105,13 @@ class Main:
 
                 #Now, make the guy move based on the values of pressed_*
                         
-            if self.pressed_down:
+            if self.pressed_down and self.Physics.bodyCanMoveToLocation(self.guy, 0, 3):
                 self.guy.didMove(0,3)
-            if self.pressed_up:
+            if self.pressed_up and self.Physics.bodyCanMoveToLocation(self.guy, 0, -3):
                 self.guy.didMove(0,-3)
-            if self.pressed_left:
+            if self.pressed_left and self.Physics.bodyCanMoveToLocation(self.guy, -3, 0):
                 self.guy.didMove(-3,0)
-            if self.pressed_right:
+            if self.pressed_right and self.Physics.bodyCanMoveToLocation(self.guy, 3, 0):
                 self.guy.didMove(3,0)
 
             #Update movement of all sprites in the game
@@ -105,7 +120,7 @@ class Main:
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1
-                print self.total_frames,"--",pygame.time.get_ticks()
+               # print self.total_frames,"--",pygame.time.get_ticks()
 
 #Run the game loop
 MainObject = Main()
