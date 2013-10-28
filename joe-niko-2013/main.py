@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 import pygame
-import player,projectile,physics
+import player,projectile,physics,gfx
 
 pygame.init()
 #import shit
@@ -99,8 +99,16 @@ class Main:
                     elif event.key == pygame.K_DOWN:     # down arrow goes down
                         self.pressed_down = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),1)
-                    self.sprites.add(pygame.sprite.RenderPlain(new_projectile))
+
+                    #Animate based on current facing direction
+                    if(self.guy.dir == 'down'): self.guy.currentAnimationType=1
+                    if(self.guy.dir == 'left'): self.guy.currentAnimationType=2
+                    if(self.guy.dir == 'right'): self.guy.currentAnimationType=3
+                    if(self.guy.dir == 'up'): self.guy.currentAnimationType=4
+
+                    #Projectile Code
+                    #new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),1)
+                    #self.sprites.add(pygame.sprite.RenderPlain(new_projectile))
                     
 
                 #Now, make the guy move based on the values of pressed_*
@@ -116,7 +124,7 @@ class Main:
 
             #Update movement of all sprites in the game
             self.sprites.update()
-            
+            #self.guy.image,self.guy.rect = gfx.load_image('character2.png',-1)
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1

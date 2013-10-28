@@ -1,22 +1,19 @@
 '''
 @author Joe Crozier & Niko Savas
 '''
-import os, pygame 
+import os, pygame, gfx
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('sprites', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
-    image = image.convert()
-    return image, image.get_rect()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, X, Y):
+        
+        self.currentAnimationFrame = 0
+        self.currentAnimationType = 0
+
+        self.dir = 'down'
+        
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('character3.png', -1)
+        self.image, self.rect = gfx.load_image('character3.png', -1)
         
         #playerSurface = pygame.image.load('character2.png').convert()
         self.Xpos = X
@@ -28,21 +25,31 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(x, y) #Moves the rect in place
     def changeSprite(self, direction):
         if direction == 'left':
-            fullname = os.path.join('sprites', 'left.jpg')
+            fullname = os.path.join('sprites', 'left.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
+            self.image.set_colorkey(self.image.get_at((1,1)))
         if direction == 'right':
-            fullname = os.path.join('sprites', 'right.jpg')
+            fullname = os.path.join('sprites', 'left.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
+            self.image = pygame.transform.flip(self.image,True,False)
+            self.image.set_colorkey(self.image.get_at((1,1)))
         if direction == 'up':
-            fullname = os.path.join('sprites', 'up.jpg')
+            fullname = os.path.join('sprites', 'up.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
+            self.image.set_colorkey(self.image.get_at((1,1)))
         if direction == 'down':
-            fullname = os.path.join('sprites', 'down.jpg')
+            fullname = os.path.join('sprites', 'down.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
+            self.image.set_colorkey(self.image.get_at((1,1)))
+        self.dir = direction
+    def update(self):
+        if self.currentAnimationType != 0 :
+            self.currentAnimationFrame += 1
+        gfx.animate(self,self.currentAnimationType)
 ##    def canMove(self):
 ##        bottomLeftX = self.rect.bottomleft[0]
 ##        bottomLeftY = self.rect.bottomleft[1]
