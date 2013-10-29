@@ -45,6 +45,29 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.image.load(fullname)
             self.image.convert()
             self.image.set_colorkey(self.image.get_at((1,1)))
+        if direction == 'downleft':
+            fullname = os.path.join('sprites', 'DownLeft.png')
+            self.image = pygame.image.load(fullname)
+            self.image.convert()
+            self.image.set_colorkey(self.image.get_at((1,1)))
+        if direction == 'downright':
+            fullname = os.path.join('sprites', 'DownLeft.png')
+            self.image = pygame.image.load(fullname)
+            self.image.convert()
+            self.image = pygame.transform.flip(self.image,True,False)
+            self.image.set_colorkey(self.image.get_at((1,1)))
+        if direction == 'upleft':
+            fullname = os.path.join('sprites', 'UpLeft.png')
+            self.image = pygame.image.load(fullname)
+            self.image.convert()
+            self.image.set_colorkey(self.image.get_at((1,1)))
+        if direction == 'upright':
+            fullname = os.path.join('sprites', 'UpLeft.png')
+            self.image = pygame.image.load(fullname)
+            self.image.convert()
+            self.image = pygame.transform.flip(self.image,True,False)
+            self.image.set_colorkey(self.image.get_at((1,1)))
+            
         self.dir = direction
     def update(self):
         if self.currentAnimationType != 0 :
