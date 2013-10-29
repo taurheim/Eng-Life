@@ -34,13 +34,13 @@ class Main:
 
         self.Physics = physics.Physics(self.background) #Initialize physics engine
 
-        self.obstacle = pygame.Surface((100,100)) #Random green obstacle for testing
+        self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
         self.obstacle = self.obstacle.convert()
         self.obstacle.fill((0, 255, 0))
         self.screen.blit(self.background, (0,0))
         self.background.blit(self.obstacle, (100,100))
 
-        self.Physics.addBody(pygame.Rect(100,100,100,100))
+        self.Physics.addBody(pygame.Rect(100,100,200,150))
         
         
         

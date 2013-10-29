@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         #playerSurface = pygame.image.load('character2.png').convert()
         self.Xpos = X
         self.Ypos = Y
-        self.rect = pygame.Rect(X,Y,32,32) 
+        self.rect = pygame.Rect(X,Y,64,64) 
         return
     def didMove(self, x, y): #Amount that Player moved
         
@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
             fullname = os.path.join('sprites', 'up.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
-            self.image.set_colorkey(self.image.get_at((1,1)))
+            self.image.set_colorkey(self.image.get_at((1,1)))            
         if direction == 'down':
             fullname = os.path.join('sprites', 'player-melee-down/frame8.png')
             self.image = pygame.image.load(fullname)
