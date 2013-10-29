@@ -30,7 +30,7 @@ class Main:
         
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
-        self.background.fill((255, 250, 250))
+        self.background.fill((0,0,0))
 
         self.Physics = physics.Physics(self.background) #Initialize physics engine
 

@@ -7,8 +7,9 @@ def load_image(name, colorkey=None):
     #except pygame.error, message:
     #    print 'Cannot load image:', name
     #    raise SystemExit, message
-    image = image.convert()
-    image.set_colorkey(image.get_at((1,1)))
+    #image = image.convert()
+    image = image.convert_alpha()
+    ##image.set_colorkey(image.get_at((1,1)))
     return image, image.get_rect()
 
 def animate(sprite, animation):

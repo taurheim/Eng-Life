@@ -41,7 +41,7 @@ class Player(pygame.sprite.Sprite):
             self.image.convert()
             self.image.set_colorkey(self.image.get_at((1,1)))
         if direction == 'down':
-            fullname = os.path.join('sprites', 'down.png')
+            fullname = os.path.join('sprites', 'player-melee-down/frame8.png')
             self.image = pygame.image.load(fullname)
             self.image.convert()
             self.image.set_colorkey(self.image.get_at((1,1)))
