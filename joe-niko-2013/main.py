@@ -43,7 +43,7 @@ class Main:
         self.Physics.addBody(pygame.Rect(100,100,100,100))
         
         
-        
+
         
         self.guy = player.Player(300,300)
         self.sprites = pygame.sprite.RenderPlain(self.guy)
@@ -98,13 +98,22 @@ class Main:
                         self.pressed_down = False
                 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    try: #If a swish animation is already running, kill it (so we dont have a bajillion swishes running at once)
+                        self.swish.kill()
+                    except:
+                        pass
+                    
                     self.pressed_mouse1 = True
+                    
+                    self.swish = player.Swish(self.guy.rect.topleft[0]-32,self.guy.rect.topleft[1]-32)
+                    self.sprites.add(pygame.sprite.RenderPlain(self.swish))
+
+                    
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.pressed_mouse1 = False
             
             
             #Animate based on current facing direction
-
             #Projectile Code
             #new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),1)
             #self.sprites.add(pygame.sprite.RenderPlain(new_projectile))
@@ -147,6 +156,12 @@ class Main:
             elif self.pressed_right and self.Physics.bodyCanMoveToLocation(self.guy, 3, 0):
                 self.guy.didMove(3,0)
                 self.guy.changeSprite('right')
+
+            try:
+                self.swish.dir = self.guy.dir
+                self.swish.rect.topleft = (self.guy.rect.topleft[0] -32,self.guy.rect.topleft[1] -32)
+            except AttributeError as e:
+                pass
                 
             #if self.pressed_down and self.Physics.bodyCanMoveToLocation(self.guy, 0, 3):
             #    self.guy.didMove(0,3)
@@ -159,6 +174,7 @@ class Main:
 
             #Update movement of all sprites in the game
             self.sprites.update()
+            
             #self.guy.image,self.guy.rect = gfx.load_image('character2.png',-1)
             if(self.framecount==60):
                 self.framecount=0
