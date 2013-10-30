@@ -43,7 +43,7 @@ class Projectile(pygame.sprite.Sprite):
         
         self.image,self.rect = load_image('projectile.gif',-1)
         self.rect = pygame.Rect(playerPos[0],playerPos[1],8,21)
-    def update(self):
+    def update(self,phys):
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))

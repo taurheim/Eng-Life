@@ -20,30 +20,30 @@ def animate(sprite, animation):
         spriteType = sprite.__class__.__name__
 
         if "Player" == spriteType:
-            if 1 == animation: #down
+            if 'down' == animation: #down
                 filename = 'player-melee-down/frame'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            elif 2 == animation: #left
+            elif 'left' == animation: #left
                 filename = 'player-melee-left/frame'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            elif 3 == animation: #right
+            elif 'right' == animation: #right
                 filename = 'player-melee-left/frame'+str(9-sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
-            elif 4 == animation: #up
+            elif 'up' == animation: #up
                 filename = 'player-melee-up/frame'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            elif 5 == animation: #downleft
+            elif 'downleft' == animation: #downleft
                 filename = 'player-melee-downleft/frame'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            elif 6 == animation: #downright
+            elif 'downright' == animation: #downright
                 filename = 'player-melee-downleft/frame'+str(9-sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
-            elif 7 == animation: #upleft
+            elif 'upleft' == animation: #upleft
                 filename = 'player-melee-upleft/frame'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            elif 8 == animation: #upright
+            elif 'upright' == animation: #upright
                 filename = 'player-melee-upleft/frame'+str(9-sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
@@ -52,21 +52,21 @@ def animate(sprite, animation):
         elif "Swish" == spriteType:
             filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
             sprite.image,null = load_image(filename,-1)
-            if 1 == animation: #down
+            if 'down' == animation: #down
                 pass
-            elif 2 == animation: #left
+            elif 'left' == animation: #left
                 sprite.image = pygame.transform.rotate(sprite.image,270)
-            elif 3 == animation: #right
+            elif 'right' == animation: #right
                 sprite.image = pygame.transform.rotate(sprite.image,90)
-            elif 4 == animation: #up
+            elif 'up' == animation: #up
                 sprite.image = pygame.transform.rotate(sprite.image,180)
-            elif 5 == animation: #downleft
+            elif 'downleft' == animation: #downleft
                 sprite.image = pygame.transform.rotate(sprite.image,325)
-            elif 6 == animation: #downright
+            elif 'downright' == animation: #downright
                 sprite.image = pygame.transform.rotate(sprite.image,45)
-            elif 7 == animation: #upleft
+            elif 'upleft' == animation: #upleft
                 sprite.image = pygame.transform.rotate(sprite.image,245)
-            elif 8 == animation: #upright
+            elif 'upright' == animation: #upright
                 sprite.image = pygame.transform.rotate(sprite.image,135)
         else:
             print "Unable to animate sprite of type: ",spriteType
