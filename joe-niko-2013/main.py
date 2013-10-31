@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx
+import pygame,player,projectile,physics,gfx,ai
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -26,23 +26,13 @@ class Main: ## __init__, game_loop
 
         self.Physics = physics.Physics(self.background) #Initialize physics engine
 
-
-        #### TEST CODE ####
-        self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
-        self.obstacle = self.obstacle.convert()
-        self.obstacle.fill((0, 255, 0))
-        self.screen.blit(self.background, (0,0))
-        self.background.blit(self.obstacle, (100,100))
-        self.Physics.addBody(pygame.Rect(100,100,200,150))
-        ####/TEST CODE ####
-        
-
         self.guy = player.Player(300,300) #Create Player object
 
         #Sprite Lists
         self.all_sprites = pygame.sprite.RenderPlain(self.guy) #Every Sprite goes here
         self.projectiles = pygame.sprite.Group() #Projectiles
         self.solids = pygame.sprite.Group() #Solids
+        self.mobs = pygame.sprite.Group() #Mobs
         
         #inputs
         self.pressed_down = False
@@ -51,6 +41,18 @@ class Main: ## __init__, game_loop
         self.pressed_right = False
         self.pressed_leftmouse = False
 
+        #### TEST CODE ####
+        self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
+        self.obstacle = self.obstacle.convert()
+        self.obstacle.fill((0, 255, 0))
+        self.screen.blit(self.background, (0,0))
+        self.background.blit(self.obstacle, (100,100))
+        self.Physics.addBody(pygame.Rect(100,100,200,150))
+
+        self.fleisig = ai.Mob(400,400, "art")
+        self.all_sprites.add(pygame.sprite.RenderPlain(self.fleisig))
+        self.mobs.add(pygame.sprite.RenderPlain(self.fleisig))
+        ####/TEST CODE ####
         
     # Main loop:
     def game_loop(self):

@@ -68,6 +68,10 @@ def animate(sprite, animation):
                 sprite.image = pygame.transform.rotate(sprite.image,245)
             elif 'upright' == animation: #upright
                 sprite.image = pygame.transform.rotate(sprite.image,135)
+        elif "Mob" == spriteType:
+            filename = 'boss-fleisig/frame'+str(sprite.currentAnimationFrame)+'.png'
+            sprite.image,null = load_image(filename,-1)
+            print filename
         else:
             print "Unable to animate sprite of type: ",spriteType
     except pygame.error:

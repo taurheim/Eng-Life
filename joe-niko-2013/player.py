@@ -1,12 +1,12 @@
 '''
 @author Joe Crozier & Niko Savas
 '''
-import os, pygame, gfx, physics
+import os, pygame, gfx
 
 class Swish(pygame.sprite.Sprite):
     def __init__(self, X, Y):
         self.currentAnimationFrame = 1
-        self.currentAnimationType = 1
+        self.currentAnimationType = 'static'
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = gfx.load_image('swish-down/frame1.png',-1)
 
@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.dy = 0
 
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = gfx.load_image('character3.png', -1)
+        self.image, self.rect = gfx.load_image('player-melee-down/frame1.png', -1)
         self.rect = pygame.Rect(X,Y,64,64)
         return
     def didMove(self, x, y): #Amount that Player moved
@@ -61,24 +61,24 @@ class Player(pygame.sprite.Sprite):
         if self.currentAnimationType==0:
             if direction == 'down':
                 self.image,null = gfx.load_image('player-melee-down/frame1.png',-1)
-            if direction == 'left':
+            elif direction == 'left':
                 self.image,null = gfx.load_image('player-melee-left/frame1.png',-1)
-            if direction == 'right':
+            elif direction == 'right':
                 self.image,null = gfx.load_image('player-melee-left/frame8.png',-1)
                 self.image = pygame.transform.flip(self.image,True,False)
-            if direction == 'up':
+            elif direction == 'up':
                 self.image,null = gfx.load_image('player-melee-up/frame1.png',-1)
-            if direction == 'downleft':
+            elif direction == 'downleft':
                 self.image,null = gfx.load_image('player-melee-downleft/frame1.png',-1)
-            if direction == 'downright':
+            elif direction == 'downright':
                 self.image,null = gfx.load_image('player-melee-downleft/frame8.png',-1)
                 self.image = pygame.transform.flip(self.image,True,False)
-            if direction == 'upleft':
+            elif direction == 'upleft':
                 self.image,null = gfx.load_image('player-melee-upleft/frame1.png',-1)
-            if direction == 'upright':
+            elif direction == 'upright':
                 self.image,null = gfx.load_image('player-melee-upleft/frame8.png',-1)
                 self.image = pygame.transform.flip(self.image,True,False)
-            if direction == 'static':
+            elif direction == 'static':
                 pass
             
     def update(self):
@@ -101,7 +101,7 @@ class Player(pygame.sprite.Sprite):
         elif self.dir == 'upright':
             self.dx,self.dy = 3,-3
         
-        if self.currentAnimationType != 0 :
+        if self.currentAnimationType is not 0 :
             self.currentAnimationFrame += 1
             gfx.animate(self,self.currentAnimationType)
         if self.currentAnimationFrame == 8:
