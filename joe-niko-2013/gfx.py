@@ -69,9 +69,33 @@ def animate(sprite, animation):
             elif 'upright' == animation: #upright
                 sprite.image = pygame.transform.rotate(sprite.image,135)
         elif "Mob" == spriteType:
-            filename = 'boss-fleisig/frame'+str(sprite.currentAnimationFrame)+'.png'
-            sprite.image,null = load_image(filename,-1)
-            print filename
+            if 'down' == animation: #down
+                filename = 'Enemy-1/down-attack/Animation-Down000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'left' == animation: #left
+                filename = 'Enemy-1/left-attack/Animation-Left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'right' == animation: #right
+                filename = 'Enemy-1/left-attack/Animation-Left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'up' == animation: #up
+                filename = 'Enemy-1/up-attack/Animation-Up000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'downleft' == animation: #downleft
+                filename = 'Enemy-1/down-left-attack/Animation-down-left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'downright' == animation: #downright
+                filename = 'Enemy-1/down-left-attack/Animation-down-left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'upleft' == animation: #upleft
+                filename = 'Enemy-1/up-left-attack/Animation-up-left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'upright' == animation: #upright
+                filename = 'Enemy-1/up-left-attack/Animation-up-left000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
         else:
             print "Unable to animate sprite of type: ",spriteType
     except pygame.error:

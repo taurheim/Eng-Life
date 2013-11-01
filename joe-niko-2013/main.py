@@ -49,9 +49,9 @@ class Main: ## __init__, game_loop
         self.background.blit(self.obstacle, (100,100))
         self.Physics.addBody(pygame.Rect(100,100,200,150))
 
-        self.fleisig = ai.Mob(400,400, "art")
-        self.all_sprites.add(pygame.sprite.RenderPlain(self.fleisig))
-        self.mobs.add(pygame.sprite.RenderPlain(self.fleisig))
+        self.mob = ai.Mob(550,200, "art")
+        self.all_sprites.add(pygame.sprite.RenderPlain(self.mob))
+        self.mobs.add(pygame.sprite.RenderPlain(self.mob))
         ####/TEST CODE ####
         
     # Main loop:
@@ -155,11 +155,22 @@ class Main: ## __init__, game_loop
             elif self.guy.moving and self.Physics.bodyCanMoveToLocation(self.guy,self.guy.dx,0):
                 self.guy.didMove(self.guy.dx,0)
                 self.guy.dx,self.guy.dy = 0,0
+
+
+            #AI movement
+
+            self.mob.move(self.guy)
+            self.mob.didMove(self.mob.dx, self.mob.dy)
+
+
+
+            
                 
             #If something needs to be done every second, put it here
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1
+                self.mob
 
 #Run the game loop
 MainObject = Main()
