@@ -2,11 +2,11 @@ import os,pygame,itertools
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('sprites', name)
-    #try:
-    image = pygame.image.load(fullname)
-    #except pygame.error, message:
-    #    print 'Cannot load image:', name
-    #    raise SystemExit, message
+    try:
+        image = pygame.image.load(fullname)
+    except pygame.error, message:
+        print 'Cannot load image:', name
+        raise SystemExit, message
     #image = image.convert()
     image = image.convert_alpha()
     ##image.set_colorkey(image.get_at((1,1)))

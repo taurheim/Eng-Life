@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx,ai
+import pygame,player,projectile,physics,gfx,ai,level
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -23,6 +23,9 @@ class Main: ## __init__, game_loop
         self.background = pygame.Surface(self.screen.get_size()) #Set Background
         self.background = self.background.convert()
         self.background.fill((0,0,0))
+        
+        self.foreground = pygame.Surface(self.screen.get_size())
+        self.foreground = self.background.convert()
 
         self.Physics = physics.Physics(self.background) #Initialize physics engine
 
@@ -42,12 +45,18 @@ class Main: ## __init__, game_loop
         self.pressed_leftmouse = False
 
         #### TEST CODE ####
+        self.currentLevel = level.Level(1,self.background)
+        for obstacle in self.currentLevel.obstacles:
+            self.Physics.addBody(obstacle)
+        
         self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
         self.obstacle = self.obstacle.convert()
         self.obstacle.fill((0, 255, 0))
         self.screen.blit(self.background, (0,0))
-        self.background.blit(self.obstacle, (100,100))
-        self.Physics.addBody(pygame.Rect(100,100,200,150))
+        #self.background.blit(self.obstacle, (100,100))
+        self.background.blit(self.currentLevel.bg,(0,0))
+
+        self.foreground.blit(self.currentLevel.fg,(0, 0))
 
         self.mob = ai.Mob(550,200, "art")
         self.all_sprites.add(pygame.sprite.RenderPlain(self.mob))
@@ -64,8 +73,16 @@ class Main: ## __init__, game_loop
 
             tick_timer.tick(60) #tick
             self.framecount+=1 #Count frames
+
+            ### DRAW ORDER ###
             self.screen.blit(self.background, (0, 0)) #Draw background
-            self.all_sprites.draw(self.screen)            #Draw sprites
+            self.all_sprites.draw(self.screen)        #Draw sprites
+            self.screen.blit(self.foreground, (0, 0)) #Draw foreground
+            
+            colorkey =self.foreground.get_at((0,0))
+            self.foreground.set_colorkey(colorkey)
+            ###/DRAW ORDER ###
+            
             pygame.display.flip()                     #Make it happen
 
             #Check for inputs
