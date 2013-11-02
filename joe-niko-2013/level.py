@@ -5,9 +5,9 @@ class Level(object):
         self.level = level #int, which level we are currently on.
         self.obstacles = []
         if 1==level:
-            self.bg,null = gfx.load_image("randombg.png",-1)
-            self.fg,null = gfx.load_image("randombg-foreground.png",-1)
-            self.obstacles.append(pygame.Rect(100,140,200,110))
+            self.bg,null = gfx.load_image("bg-test-2-b.png",-1)
+            self.fg,null = gfx.load_image("bg-test-2-f.png",-1)
+            #self.obstacles.append(pygame.Rect(100,140,200,110))
         if 2==level:
             pass
         if 3==level:
