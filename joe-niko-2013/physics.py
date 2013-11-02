@@ -10,8 +10,8 @@ class Physics:
         bodyRect = body.rect.copy() #Copy the body's rect (might not be necessary)
         proposedRect = bodyRect.copy() 
         proposedRect = proposedRect.move(xOffset, yOffset) #Proposed rect is where the body would move
-
-        if self.levelRect.contains(proposedRect) and proposedRect.collidelist(self.collisionRects) == -1: #If proposedRect is inside the level, let it move 
+        
+        if (body.__class__.__name__== "Mob" or self.levelRect.contains(proposedRect)) and proposedRect.collidelist(self.collisionRects) == -1: #If proposedRect is inside the level, let it move 
             return True
         else:
             return False

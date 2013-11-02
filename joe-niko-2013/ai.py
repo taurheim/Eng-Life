@@ -16,10 +16,13 @@ class Mob(pygame.sprite.Sprite):
         
         self.currentAnimationFrame = 0
         self.currentAnimationType = 'static'
-        self.dir = 'down'
+        self.direction = 'up'
         self.framecounter = 0
         self.dx = 0
         self.dy = 0
+
+        self.moving = True #Don't know if we need this but I'll keep this in here in case we want mobs to stand still
+        self.forced = 0
 
         self.image,self.rect = gfx.load_image("Enemy-1/Enemy-1-down.png",-1)
         self.rect = pygame.Rect(x,y,64,64)

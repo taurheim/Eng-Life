@@ -2,7 +2,7 @@
 @author Joe Crozier & Niko Savas
 '''
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx,ai,level
+import pygame,player,projectile,physics,gfx,ai,level,random
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -47,6 +47,7 @@ class Main: ## __init__, game_loop
         #### TEST CODE ####
         self.currentLevel = level.Level(1,self.background)
         for obstacle in self.currentLevel.obstacles:
+            obstacle.height-=48
             self.Physics.addBody(obstacle)
         
         self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
@@ -175,19 +176,54 @@ class Main: ## __init__, game_loop
 
 
             #AI movement
+            for enemy in self.mobs:
+                enemy.move(self.guy)
+                if enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, enemy.dx, enemy.dy):
+                    #Mob is moving freely
+                    enemy.didMove(enemy.dx,enemy.dy)
+                    enemy.forced = 0
+                    
+                elif enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, 0, enemy.dy):
+                    if enemy.forced:
+                        enemy.didMove(0,enemy.forced)
+                    elif not enemy.forced: #If walking into a wall and also not moving
+                        num = random.randrange(-2,3,4)
+                        enemy.forced =  num #Pick a direction and move
+                        
+                elif enemy.moving and self.Physics.bodyCanMoveToLocation(enemy,enemy.dx,0):
+                    if enemy.forced:
+                        enemy.didMove(enemy.forced,0)
+                    elif not enemy.forced: #If walking into a wall and also not moving
+                        num = random.randrange(-2,3,4)
+                        enemy.forced =  num #Pick a direction and move
+                        
+                elif enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, 0, 2):
+                    enemy.didMove(0,2)
+                elif enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, -2, 0):
+                    enemy.didMove(2,0)
+                else:
+                    enemy.didMove(0,2)
 
-            self.mob.move(self.guy)
-            self.mob.didMove(self.mob.dx, self.mob.dy)
+            #Tick level
+            self.currentLevel.tick()
 
-
-
-            
                 
             #If something needs to be done every second, put it here
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1
-                self.mob
+                self.currentLevel.leveltimer +=1
+                if(self.currentLevel.leveltimer==self.currentLevel.spawnRate):
+                    #Spawn a Mob
+                    self.currentLevel.leveltimer=0
+                    spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
+                    self.newmob = ai.Mob(spawnloc[0],spawnloc[1], "art")
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
+                    self.mobs.add(pygame.sprite.RenderPlain(self.newmob))
+                    print "Mob Spawned"
+                print self.currentLevel.leveltimer
+    def changeLevel(self):
+        pass
 
 #Run the game loop
 MainObject = Main()
