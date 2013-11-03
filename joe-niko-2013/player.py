@@ -34,6 +34,25 @@ class Swish(pygame.sprite.Sprite):
         if(self.currentAnimationFrame == 12): #After 12 frames, kill the animation
             self.kill()
         return
+    def createSwishBox(self):
+        swishrect = pygame.Rect(0,0,0,0)
+        if(self.dir == 'down'):
+            swishrect = pygame.Rect(self.rect.x,self.rect.y+64,64,128)
+        elif(self.dir == 'left'):
+            swishrect = pygame.Rect(self.rect.x,self.rect.y,128,64)
+        elif(self.dir == 'right'):
+            swishrect = pygame.Rect(self.rect.x+64,self.rect.y,128,64)
+        elif(self.dir == 'up'):
+            swishrect = pygame.Rect(self.rect.x,self.rect.y,64,128)
+        elif(self.dir == 'downleft'):
+            swishrect = pygame.Rect(self.rect.x,self.rect.y+45,90,90)
+        elif(self.dir == 'downright'):
+            swishrect = pygame.Rect(self.rect.x+45,self.rect.y+45,90,90)
+        elif(self.dir == 'upleft'):
+            swishrect = pygame.Rect(self.rect.x,self.rect.y,90,90)
+        elif(self.dir == 'upright'):
+            swishrect = pygame.Rect(self.rect.x+45,self.rect.y,90,90)
+        return swishrect
     
 class Player(pygame.sprite.Sprite):
     def __init__(self, X, Y):

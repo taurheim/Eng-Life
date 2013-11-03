@@ -167,4 +167,9 @@ class Mob(pygame.sprite.Sprite):
             self.currentAnimationFrame=0
             self.framecounter = 0
         self.setDir()
+    def die(self):
+        self.kill()
+
+    def takedamage(self):
+        self.die()
         

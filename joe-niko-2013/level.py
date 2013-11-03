@@ -24,7 +24,7 @@ class Level(object):
             self.bg,null = gfx.load_image("level-1-bg.png",-1)
             self.fg,null = gfx.load_image("level-1-fg.png",-1)
             
-            self.obstacles.append(pygame.Rect(306,440,90,50))
+            self.obstacles.append(pygame.Rect(312,440,80,55))
             self.obstacles.append(pygame.Rect(106,197,65,62))
             self.obstacles.append(pygame.Rect(372,197,65,62))
             self.obstacles.append(pygame.Rect(634,197,65,62))

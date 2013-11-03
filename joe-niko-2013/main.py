@@ -66,13 +66,14 @@ class Main: ## __init__, game_loop
         
     # Main loop:
     def game_loop(self):
+        
         self.running = True #If running is true, the game will play
         self.framecount = 0 #how many frames have elapsed (resets every second)
         self.total_frames = 0 #Total frames since start
         
         while self.running:
 
-            tick_timer.tick(60) #tick
+            tick_timer.tick(GAME_SETTINGS.GAME_SPEED) #tick
             self.framecount+=1 #Count frames
 
             ### DRAW ORDER ###
@@ -147,18 +148,23 @@ class Main: ## __init__, game_loop
                 self.guy.moving = False #Guy is not moving
 
                 
-            #Make player attack(), make a swish animation
+            #Make player attack(), make a swish animation, make a swish collision box
             if self.pressed_leftmouse and not self.guy.attacking:
                 self.guy.attack()
                 self.swish = player.Swish(self.guy.rect.topleft[0]-32,self.guy.rect.topleft[1]-32)
                 self.all_sprites.add(pygame.sprite.RenderPlain(self.swish))
-
             #If a swish exists, make sure it's direction matches the players direction
-            try:
+            
+            if self.guy.attacking:
                 self.swish.dir = self.guy.dir
                 self.swish.rect.topleft = (self.guy.rect.topleft[0] -32,self.guy.rect.topleft[1] -32)
-            except AttributeError as e:
-                pass
+
+                ### SWISH HITBOX ###
+##              sbb = self.swish.createSwishBox()
+##              self.obstacle = pygame.Surface((sbb.height,sbb.width))
+##              self.obstacle = self.obstacle.convert()
+##              self.obstacle.fill((0, 255, 0))
+##              self.background.blit(self.obstacle, (sbb.x,sbb.y))
 
             #Update movement of all sprites in the game
             self.all_sprites.update()
@@ -177,6 +183,11 @@ class Main: ## __init__, game_loop
 
             #AI movement
             for enemy in self.mobs:
+
+                #If the player's attack hits the enemy
+                if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
+                    enemy.takedamage()
+                
                 enemy.move(self.guy)
                 if enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, enemy.dx, enemy.dy):
                     #Mob is moving freely
