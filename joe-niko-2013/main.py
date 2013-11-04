@@ -60,7 +60,6 @@ class Main: ## __init__, game_loop
         self.foreground.blit(self.currentLevel.fg,(0, 0))
 
         self.mob = ai.Mob(550,200, "art")
-        self.all_sprites.add(pygame.sprite.RenderPlain(self.mob))
         self.mobs.add(pygame.sprite.RenderPlain(self.mob))
         ####/TEST CODE ####
         
@@ -79,6 +78,7 @@ class Main: ## __init__, game_loop
             ### DRAW ORDER ###
             self.screen.blit(self.background, (0, 0)) #Draw background
             self.all_sprites.draw(self.screen)        #Draw sprites
+            self.mobs.draw(self.screen)
             self.screen.blit(self.foreground, (0, 0)) #Draw foreground
             
             colorkey =self.foreground.get_at((0,0))
@@ -168,7 +168,7 @@ class Main: ## __init__, game_loop
 
             #Update movement of all sprites in the game
             self.all_sprites.update()
-
+            self.mobs.update()
             #Check for physics collisions with player
             if self.guy.moving and self.Physics.bodyCanMoveToLocation(self.guy, self.guy.dx, self.guy.dy):
                 self.guy.didMove(self.guy.dx,self.guy.dy)
@@ -215,26 +215,50 @@ class Main: ## __init__, game_loop
                 else:
                     enemy.didMove(0,2)
 
+            #Testing enemy projectile collisions
+            for proj in self.projectiles:
+                if proj.rect.colliderect(self.guy.rect):
+                    proj.die()
+                    self.guy.tookDamage(5)
+                    print "Took 5 damage"
+                for solid in self.Physics.collisionRects:
+                    if proj.rect.colliderect(solid):
+                        proj.die()
+                        print "Collision with rect"
+                    
+                
             #Tick level
             self.currentLevel.tick()
-
                 
             #If something needs to be done every second, put it here
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1
                 self.currentLevel.leveltimer +=1
+                self.mobs.update()
+            #Enemy projectile spawning
+                for enemy in self.mobs:                     
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    selfPos = [enemy.rect.x, enemy.rect.y]
+                    self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
+                    self.projectiles = pygame.sprite.Group()
+                    self.projectiles.add(self.projectile)
+                    self.all_sprites.add(self.projectile)
+            
                 if(self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob
                     self.currentLevel.leveltimer=0
                     spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
                     self.newmob = ai.Mob(spawnloc[0],spawnloc[1], "art")
-                    self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
                     self.mobs.add(pygame.sprite.RenderPlain(self.newmob))
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
                     print "Mob Spawned"
-                print self.currentLevel.leveltimer
     def changeLevel(self):
         pass
+
+    def mobAttack(mobPos, proj_type):
+        playerPos = [player.rect.x, player.rect.y]
+        mobPos = [self.rect.x, self.rect.y]
 
 #Run the game loop
 MainObject = Main()

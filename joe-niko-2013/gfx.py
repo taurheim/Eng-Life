@@ -48,7 +48,8 @@ def animate(sprite, animation):
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
         elif "Projectile" == spriteType:
-            return
+            filename = "Enemy-1/projectiles/frames/"+str(sprite.currentAnimationFrame)+'.png'
+            sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
             filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
             sprite.image,null = load_image(filename,-1)

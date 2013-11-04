@@ -16,6 +16,7 @@ class Swish(pygame.sprite.Sprite):
         fullname = os.path.join('sprites', 'swish-down/frame1.png')
         self.image = pygame.image.load(fullname)
         self.image.convert()
+
     def update(self):
 
         #Positioning required to make the swish look realistic
@@ -70,6 +71,12 @@ class Player(pygame.sprite.Sprite):
         self.image, self.rect = gfx.load_image('player-melee-down/frame1.png', -1)
         self.rect = pygame.Rect(X,Y,64,64)
         return
+
+    def tookDamage(self,damage):
+        pass
+
+    def returnPos(self):
+        return self.rect.x, self.rect.yS
     def didMove(self, x, y): #Amount that Player moved
         self.rect.move_ip(x, y) #Moves the rect in place
     def setDir(self,direction):

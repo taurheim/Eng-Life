@@ -1,7 +1,7 @@
 '''
 @author Joe Crozier & Nikolai Savas
 '''
-import os, pygame, gfx
+import os, pygame, gfx, projectile
 
 class Mob(pygame.sprite.Sprite):
     ## Mob
@@ -13,7 +13,7 @@ class Mob(pygame.sprite.Sprite):
     # 6. Needs spawning code >> created in main
     def __init__(self, x, y, mobtype):
         pygame.sprite.Sprite.__init__(self)
-        
+        self.projectileTimer = 0
         self.currentAnimationFrame = 0
         self.currentAnimationType = 'static'
         self.direction = 'up'
@@ -26,6 +26,7 @@ class Mob(pygame.sprite.Sprite):
 
         self.image,self.rect = gfx.load_image("Enemy-1/Enemy-1-down.png",-1)
         self.rect = pygame.Rect(x,y,64,64)
+        self.projectiles = pygame.sprite.Group()
         
         pass
 
@@ -153,10 +154,19 @@ class Mob(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.image,True,False)
             elif self.direction == 'static':
                 pass
-    def attack(self):
-        pass
+    def attack(self, player):
+        playerPos = [player.rect.x, player.rect.y]
+        selfPos = [self.rect.x, self.rect.y]
+        self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
+        self.projectiles = pygame.sprite.Group()
+        self.projectiles.add(self.projectile)
     def update(self):
         self.framecounter+=1
+        self.projectileTimer+=1
+        self.projectiles.update()
+        if self.projectileTimer == 60:
+            projectileTimer = 0
+        
         if self.currentAnimationType is not 0:
             self.currentAnimationFrame +=1
             gfx.animate(self,self.currentAnimationType)
