@@ -37,6 +37,7 @@ class Main: ## __init__, game_loop
         self.solids = pygame.sprite.Group() #Solids
         self.mobs = pygame.sprite.Group() #Mobs
         
+        
         #inputs
         self.pressed_down = False
         self.pressed_up = False
@@ -217,12 +218,14 @@ class Main: ## __init__, game_loop
 
             #Testing enemy projectile collisions
             for proj in self.projectiles:
-                if proj.rect.colliderect(self.guy.rect):
+                self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, 33, 33)
+                self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
+                if self.projRect.colliderect(self.playerRect):
                     proj.die()
                     self.guy.tookDamage(5)
                     print "Took 5 damage"
                 for solid in self.Physics.collisionRects:
-                    if proj.rect.colliderect(solid):
+                    if self.projRect.colliderect(solid):
                         proj.die()
                         print "Collision with rect"
                     
@@ -240,10 +243,9 @@ class Main: ## __init__, game_loop
                 for enemy in self.mobs:                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
                     selfPos = [enemy.rect.x, enemy.rect.y]
-                    self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
-                    self.projectiles = pygame.sprite.Group()
-                    self.projectiles.add(self.projectile)
-                    self.all_sprites.add(self.projectile)
+                    proj = projectile.Projectile(playerPos, selfPos, 'art')
+                    self.projectiles.add(proj)
+                    self.all_sprites.add(proj)
             
                 if(self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob
