@@ -48,7 +48,7 @@ class Projectile(pygame.sprite.Sprite):
         if proj_type == 'art':
             self.image, self.rect = load_image('Enemy-1/projectiles/Left.png')
             
-        self.rect = pygame.Rect(mobPos[0],mobPos[1],8,21)
+        self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
 
         #Bounds of game
 
