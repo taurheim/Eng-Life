@@ -1,8 +1,15 @@
 '''
 @author Joe Crozier & Niko Savas
 '''
+
+#>>>> Possible optimization options:
+#>>>>  1. Make sure all grouped if statements are if/elif
+#>>>>  2. Order if/elif statements to be in order of most likely to least likely
+#>>>>  3. Store images in variables and call them (avoid the use of gfx.load_image)
+#>>>>  4. 
+
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx,ai,level,random
+import pygame,player,projectile,physics,gfx,ai,level,random,menu
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -18,6 +25,7 @@ class Main: ## __init__, game_loop
     def __init__(self):
         pygame.init() #Initialize PyGame
 
+        #Initialize Displays
         self.screen = pygame.display.set_mode((GAME_SETTINGS.WINDOW_WIDTH,GAME_SETTINGS.WINDOW_HEIGHT)) #Initialize Screen
         
         self.background = pygame.Surface(self.screen.get_size()) #Set Background
@@ -25,13 +33,16 @@ class Main: ## __init__, game_loop
         self.background.fill((0,0,0))
         
         self.foreground = pygame.Surface(self.screen.get_size())
-        self.foreground = self.background.convert()
+        self.foreground = self.foreground.convert()
 
-        self.Physics = physics.Physics(self.background) #Initialize physics engine
+        #Load title screen
+        self.titlescreen = menu.TitleScreen((GAME_SETTINGS.WINDOW_WIDTH,GAME_SETTINGS.WINDOW_HEIGHT))
 
+        #Initialize Physics.py
+        self.Physics = physics.Physics(self.background)
+
+        #Sprites
         self.guy = player.Player(300,300) #Create Player object
-
-        #Sprite Lists
         self.all_sprites = pygame.sprite.RenderPlain(self.guy) #Every Sprite goes here
         self.projectiles = pygame.sprite.Group() #Projectiles
         self.solids = pygame.sprite.Group() #Solids
@@ -45,24 +56,14 @@ class Main: ## __init__, game_loop
         self.pressed_right = False
         self.pressed_leftmouse = False
 
-        #### TEST CODE ####
+
+        #Level set up
         self.currentLevel = level.Level(1,self.background)
         for obstacle in self.currentLevel.obstacles:
             obstacle.height-=48
             self.Physics.addBody(obstacle)
-        
-        self.obstacle = pygame.Surface((200,200)) #Random green obstacle for testing
-        self.obstacle = self.obstacle.convert()
-        self.obstacle.fill((0, 255, 0))
-        self.screen.blit(self.background, (0,0))
-        #self.background.blit(self.obstacle, (100,100))
         self.background.blit(self.currentLevel.bg,(0,0))
-
         self.foreground.blit(self.currentLevel.fg,(0, 0))
-
-        self.mob = ai.Mob(550,200, "art")
-        self.mobs.add(pygame.sprite.RenderPlain(self.mob))
-        ####/TEST CODE ####
         
     # Main loop:
     def game_loop(self):
@@ -77,15 +78,19 @@ class Main: ## __init__, game_loop
             self.framecount+=1 #Count frames
 
             ### DRAW ORDER ###
+            ## This code makes sure that the background is drawn first, then the foreground
+            ## The foreground should have transparent pixels, these pixels should be set 
+            ##  to a color (rgb), where that colour in the image file is assumed to be 
+            ##  transparent. Which colour is transparent should be held in the (0,0) pixel
+            ##  (for example, if the transparent color is red, the top-left-most pixel should be
+            ##  set to rgb(255,0,0)
             self.screen.blit(self.background, (0, 0)) #Draw background
             self.all_sprites.draw(self.screen)        #Draw sprites
             self.mobs.draw(self.screen)
             self.screen.blit(self.foreground, (0, 0)) #Draw foreground
-            
-            colorkey =self.foreground.get_at((0,0))
+            colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
-            ###/DRAW ORDER ###
-            
+
             pygame.display.flip()                     #Make it happen
 
             #Check for inputs
@@ -121,8 +126,8 @@ class Main: ## __init__, game_loop
 
             ###########################################
             ### DIRECTIONS                          ###
-            ### 1: down        _       _            ###
-            ### 2: left       |   / \   |           ###
+            ### 1: down        _       _            ### If a number must be substituted
+            ### 2: left       |   / \   |           ###  for a direction, use this.
             ### 3: right        7  4  8             ###
             ### 4: up        <  2     3  >          ###
             ### 5: downleft     5  1  6             ###
@@ -154,13 +159,14 @@ class Main: ## __init__, game_loop
                 self.guy.attack()
                 self.swish = player.Swish(self.guy.rect.topleft[0]-32,self.guy.rect.topleft[1]-32)
                 self.all_sprites.add(pygame.sprite.RenderPlain(self.swish))
-            #If a swish exists, make sure it's direction matches the players direction
+            #If a swish exists, make sure its direction matches the players direction
             
             if self.guy.attacking:
                 self.swish.dir = self.guy.dir
                 self.swish.rect.topleft = (self.guy.rect.topleft[0] -32,self.guy.rect.topleft[1] -32)
 
                 ### SWISH HITBOX ###
+                # enable this to see the swish hitbox
 ##              sbb = self.swish.createSwishBox()
 ##              self.obstacle = pygame.Surface((sbb.height,sbb.width))
 ##              self.obstacle = self.obstacle.convert()
@@ -169,7 +175,7 @@ class Main: ## __init__, game_loop
 
             #Update movement of all sprites in the game
             self.all_sprites.update()
-            self.mobs.update()
+            
             #Check for physics collisions with player
             if self.guy.moving and self.Physics.bodyCanMoveToLocation(self.guy, self.guy.dx, self.guy.dy):
                 self.guy.didMove(self.guy.dx,self.guy.dy)
@@ -185,11 +191,14 @@ class Main: ## __init__, game_loop
             #AI movement
             for enemy in self.mobs:
 
-                #If the player's attack hits the enemy
+                #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
                     enemy.takedamage()
-                
+                    
+                #enemy.move sets the enemy's dx,dy, and direction
                 enemy.move(self.guy)
+
+                #Deal with collisions in the game
                 if enemy.moving and self.Physics.bodyCanMoveToLocation(enemy, enemy.dx, enemy.dy):
                     #Mob is moving freely
                     enemy.didMove(enemy.dx,enemy.dy)
@@ -262,6 +271,11 @@ class Main: ## __init__, game_loop
         playerPos = [player.rect.x, player.rect.y]
         mobPos = [self.rect.x, self.rect.y]
 
+#Load title screen
 #Run the game loop
+
 MainObject = Main()
-MainObject.game_loop()
+if(MainObject.titlescreen.screen_loop(MainObject.screen)):
+    MainObject.game_loop()
+else:
+    pygame.quit()
