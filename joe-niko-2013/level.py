@@ -63,6 +63,7 @@ class Boss(pygame.sprite.Sprite):
         self.dx = 0
         self.dy = 0
         self.attacking = False
+        self.takingdmg = False
         self.throwball = False #This is so main.py can throw the ball instead of level.py
         if(level==1):
             self.level = level
@@ -113,12 +114,18 @@ class Boss(pygame.sprite.Sprite):
                     self.attacking=True
             elif(self.hp >=150):
                 self.currentphase = 2
+                # Phase 2
+                print "Phase 2"
                 pass
             elif(self.hp >=50):
                 self.currentphase = 3
+                # Phase 3
+                print "Phase 3"
                 pass
             elif(self.hp > 0):
                 self.currentphase = 4
+                # Phase 4
+                print "Phase 4"
                 pass
             else:
                 self.die()
@@ -129,6 +136,14 @@ class Boss(pygame.sprite.Sprite):
                 self.attacking=False
                 self.throwball=True
                 self.currentAnimationFrame=0
+        if(self.takingdmg):
+            self.counter+=1
+            if self.counter%5==0:
+                self.image,null = gfx.load_image("boss-art/throw0005.png",-1)
+            elif self.counter%5==1:
+                self.image,null = gfx.load_image("boss-art/takingdmg.png",-1)
+            if(self.counter==60):
+                self.takingdmg= False
     def walkTo(self,x,y):
         self.moving = True
         
@@ -154,3 +169,8 @@ class Boss(pygame.sprite.Sprite):
         self.destination = [x,y]
     def move(self,pos):
         pass
+    def takeDamage(self,dmg):
+        if not self.takingdmg:
+            self.takingdmg=True
+            self.counter =0
+            self.hp -= dmg

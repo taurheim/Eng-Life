@@ -253,6 +253,8 @@ class Main: ## __init__, game_loop
                     self.all_sprites.add(paintball)
                     self.projectiles.add(paintball)
                     self.boss.throwball= False
+                if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
+                    self.boss.takeDamage(5)
             except AttributeError as e:
                 pass
 
@@ -270,7 +272,7 @@ class Main: ## __init__, game_loop
                     elif proj.proj_type == 'paint':
                         self.guy.tookDamage(1)
                         self.healthChanged = True
-                        print "Took 3 damage"
+                        print "Took 1 damage"
                         pass
                     
                 for solid in self.Physics.collisionRects:
