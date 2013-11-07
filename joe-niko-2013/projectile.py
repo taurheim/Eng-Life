@@ -21,6 +21,7 @@ class Projectile(pygame.sprite.Sprite):
         self.proj_type = proj_type
         self.aimingat = playerPos
         self.extra = extra
+        self.frames = 0
         
         #print playerPos,mousePos
         pygame.sprite.Sprite.__init__(self)
@@ -63,6 +64,10 @@ class Projectile(pygame.sprite.Sprite):
 
         self.gameRect = pygame.Rect(0,0,800,600)
     def update(self):
+        if(self.frames):
+            self.frames+=1
+            if(self.frames==90):
+                self.kill()
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))
@@ -98,6 +103,7 @@ class Projectile(pygame.sprite.Sprite):
             self.dx=0
             self.dy=0
             self.image,null = load_image('boss-art/splat-'+self.extra+'.png')
+            self.frames+=1
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
             self.rect.left-=32

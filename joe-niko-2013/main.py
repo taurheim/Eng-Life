@@ -262,10 +262,16 @@ class Main: ## __init__, game_loop
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, 33, 33)
                 self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
                 if self.projRect.colliderect(self.playerRect):
-                    proj.die()
-                    self.guy.tookDamage(10)
-                    print "Took 10 damage"
-                    self.healthChanged = True
+                    if proj.proj_type == 'art':
+                        proj.die()
+                        self.guy.tookDamage(10)
+                        print "Took 10 damage"
+                        self.healthChanged = True
+                    elif proj.proj_type == 'paint':
+                        self.guy.tookDamage(1)
+                        self.healthChanged = True
+                        print "Took 3 damage"
+                        pass
                     
                 for solid in self.Physics.collisionRects:
                     if self.projRect.colliderect(solid) and proj.proj_type is not 'paint':
