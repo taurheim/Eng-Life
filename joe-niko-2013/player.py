@@ -70,10 +70,13 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = gfx.load_image('player-melee-down/frame1.png', -1)
         self.rect = pygame.Rect(X,Y,64,64)
+        self.canAttack = True
+        self.health = 100
+
         return
 
     def tookDamage(self,damage):
-        pass
+        self.health -= damage
 
     def returnPos(self):
         return self.rect.x, self.rect.yS

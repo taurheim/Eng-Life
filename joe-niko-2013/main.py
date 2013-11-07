@@ -64,6 +64,15 @@ class Main: ## __init__, game_loop
             self.Physics.addBody(obstacle)
         self.background.blit(self.currentLevel.bg,(0,0))
         self.foreground.blit(self.currentLevel.fg,(0, 0))
+
+        
+        self.healthBar = pygame.sprite.Sprite()
+        pygame.sprite.Sprite.__init__(self.healthBar)
+        self.healthBar.image, null = gfx.load_image('health/10.png',-1)
+        self.healthBar.rect = (50,550,100,20)
+        self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
+        self.healthChanged = False
+
         
     # Main loop:
     def game_loop(self):
@@ -155,10 +164,11 @@ class Main: ## __init__, game_loop
 
                 
             #Make player attack(), make a swish animation, make a swish collision box
-            if self.pressed_leftmouse and not self.guy.attacking:
+            if self.pressed_leftmouse and not self.guy.attacking and self.guy.canAttack == True:
                 self.guy.attack()
                 self.swish = player.Swish(self.guy.rect.topleft[0]-32,self.guy.rect.topleft[1]-32)
                 self.all_sprites.add(pygame.sprite.RenderPlain(self.swish))
+                self.guy.canAttack = False
             #If a swish exists, make sure its direction matches the players direction
             
             if self.guy.attacking:
@@ -231,18 +241,29 @@ class Main: ## __init__, game_loop
                 self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
                 if self.projRect.colliderect(self.playerRect):
                     proj.die()
-                    self.guy.tookDamage(5)
-                    print "Took 5 damage"
+                    self.guy.tookDamage(10)
+                    print "Took 10 damage"
+                    self.healthChanged = True
+                    
                 for solid in self.Physics.collisionRects:
                     if self.projRect.colliderect(solid):
                         proj.die()
-                        print "Collision with rect"
                     
                 
             #Tick level
             self.currentLevel.tick()
-                
+
+            #Health bar logic
+
+            if self.healthChanged:
+                healthStr = str(self.guy.health/10)
+                self.healthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
+                self.healthChanged = False
+            
             #If something needs to be done every second, put it here
+            if (self.framecount == 30 or self.framecount == 60):
+                self.guy.canAttack = True
+            
             if(self.framecount==60):
                 self.framecount=0
                 self.total_frames += 1

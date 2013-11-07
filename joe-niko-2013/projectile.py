@@ -79,7 +79,6 @@ class Projectile(pygame.sprite.Sprite):
                 self.currentAnimationFrame=0
             self.doubleTick == False
         else:
-        
             self.doubleTick == True
         #print self.placeholder
 
