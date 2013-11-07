@@ -65,7 +65,9 @@ class Main: ## __init__, game_loop
         self.background.blit(self.currentLevel.bg,(0,0))
         self.foreground.blit(self.currentLevel.fg,(0, 0))
 
-        
+        #Health set up
+
+        self.killCount = 0
         self.healthBar = pygame.sprite.Sprite()
         pygame.sprite.Sprite.__init__(self.healthBar)
         self.healthBar.image, null = gfx.load_image('health/10.png',-1)
@@ -204,6 +206,7 @@ class Main: ## __init__, game_loop
                 #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
                     enemy.takedamage()
+                    self.killCount += 1
                     
                 #enemy.move sets the enemy's dx,dy, and direction
                 enemy.move(self.guy)
@@ -257,8 +260,24 @@ class Main: ## __init__, game_loop
 
             if self.healthChanged:
                 healthStr = str(self.guy.health/10)
+                print healthStr
                 self.healthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.healthChanged = False
+
+            #Death conditions
+                
+                if healthStr == '0':
+                    self.deathScreen = menu.deathScreen()
+                    self.running = False
+                    if MainObject.deathScreen.screen_loop(MainObject.screen):
+                        restartGame()
+                        return
+                    else:
+                        pygame.quit()
+                        
+
+                    
+                    
             
             #If something needs to be done every second, put it here
             if (self.framecount == 30 or self.framecount == 60):
@@ -292,9 +311,17 @@ class Main: ## __init__, game_loop
         playerPos = [player.rect.x, player.rect.y]
         mobPos = [self.rect.x, self.rect.y]
 
-#Load title screen
-#Run the game loop
 
+
+
+
+def restartGame():
+    MainObject = 0
+    MainObject = Main()
+    MainObject.game_loop()
+
+#Load title screen
+#Run the game loop   
 MainObject = Main()
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):
     MainObject.game_loop()

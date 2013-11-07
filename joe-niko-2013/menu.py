@@ -51,3 +51,34 @@ class TitleScreen():
                 screen.blit(self.playbtn[0],(109,460))
             elif self.instbtn[1].collidepoint(mouse):
                 screen.blit(self.instbtn[0],(344,460))
+
+
+class deathScreen():
+    def __init__(self):
+        self.screensurface = pygame.Surface((500,300))
+        self.screensurface.convert()
+        self.image,null = gfx.load_image("menus/death.png",-1)
+        self.playRect = pygame.Rect(170,380,210,50)
+        self.quitRect = pygame.Rect(530,380,80,50)
+    def screen_loop(self,screen):
+        self.running = True
+        tick_timer = pygame.time.Clock()
+        while self.running:
+            pygame.display.flip()
+            tick_timer.tick(60)
+            screen.blit(self.image, (150,150))
+            mouse = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.running = False
+                    return False
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
+                    if self.playRect.collidepoint(mouse):
+                        self.running = False
+                        return True
+                    elif self.quitRect.collidepoint(mouse):
+                        self.running = False
+                        return False
+                
+                
+            
