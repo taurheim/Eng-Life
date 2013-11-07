@@ -48,8 +48,9 @@ def animate(sprite, animation):
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
         elif "Projectile" == spriteType:
-            filename = "Enemy-1/projectiles/frames/"+str(sprite.currentAnimationFrame)+'.png'
-            sprite.image,null = load_image(filename,-1)
+            if(sprite.proj_type == 'art'):
+                filename = "Enemy-1/projectiles/frames/"+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
             filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
             sprite.image,null = load_image(filename,-1)
@@ -97,6 +98,9 @@ def animate(sprite, animation):
                 filename = 'Enemy-1/up-left-attack/Animation-up-left000'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
                 sprite.image = pygame.transform.flip(sprite.image,True,False)
+        elif "Boss" == spriteType:
+            filename = 'boss-art/throw000'+str(sprite.currentAnimationFrame)+'.png'
+            sprite.image,null = load_image(filename,-1)
         else:
             print "Unable to animate sprite of type: ",spriteType
     except pygame.error:

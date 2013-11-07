@@ -17,7 +17,11 @@ def load_image(name, colorkey=None):
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self,playerPos,mobPos,proj_type):
+    def __init__(self,playerPos,mobPos,proj_type,extra):
+        self.proj_type = proj_type
+        self.aimingat = playerPos
+        self.extra = extra
+        
         #print playerPos,mousePos
         pygame.sprite.Sprite.__init__(self)
 
@@ -45,10 +49,15 @@ class Projectile(pygame.sprite.Sprite):
         self.doubleTick = True
         self.currentAnimationType = 1
         self.currentAnimationFrame = 1
-        if proj_type == 'art':
+        if self.proj_type == 'art':
             self.image, self.rect = load_image('Enemy-1/projectiles/Left.png')
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
+        elif self.proj_type == 'paint':
+            self.image, self.rect = load_image('boss-art/ball-'+self.extra+'.png')
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],0,0)
             
-        self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
 
         #Bounds of game
 
@@ -84,6 +93,15 @@ class Projectile(pygame.sprite.Sprite):
 
         if not self.gameRect.contains(self.rect):
             self.die()
-
+        if self.rect.left <= self.aimingat[0]+5 and self.rect.top <= self.aimingat[1]+5 and self.rect.left >= self.aimingat[0]-5 and self.rect.top >= self.aimingat[1]-5:
+            #Trying to hit here
+            self.dx=0
+            self.dy=0
+            self.image,null = load_image('boss-art/splat-'+self.extra+'.png')
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+            self.rect.left-=32
+            self.rect.width = 128
+            self.rect.height = 32
     def die(self):
         self.kill()

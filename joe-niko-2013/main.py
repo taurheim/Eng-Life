@@ -97,7 +97,8 @@ class Main: ## __init__, game_loop
             ##  set to rgb(255,0,0)
             self.screen.blit(self.background, (0, 0)) #Draw background
             self.all_sprites.draw(self.screen)        #Draw sprites
-            self.mobs.draw(self.screen)
+            self.projectiles.draw(self.screen)
+            #COULD CLEAN THIS UP^^
             self.screen.blit(self.foreground, (0, 0)) #Draw foreground
             colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
@@ -119,6 +120,12 @@ class Main: ## __init__, game_loop
                         self.pressed_up = True
                     elif event.key == pygame.K_DOWN:      # down arrow goes down
                         self.pressed_down = True
+                    elif event.key == pygame.K_s:
+                        self.boss = level.Boss(1000,-250,self.currentLevel.level)
+                        self.boss.add(pygame.sprite.RenderPlain(self.boss))
+                        self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
+                        self.boss.walkTo(700,250)
+                        print "Boss Spawned by Player"
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
                     if event.key == pygame.K_LEFT:        # left arrow turns left
@@ -199,7 +206,6 @@ class Main: ## __init__, game_loop
                 self.guy.didMove(self.guy.dx,0)
                 self.guy.dx,self.guy.dy = 0,0
 
-
             #AI movement
             for enemy in self.mobs:
 
@@ -237,7 +243,20 @@ class Main: ## __init__, game_loop
                     enemy.didMove(2,0)
                 else:
                     enemy.didMove(0,2)
+            #Boss stuff
+            try:
+                if(self.boss.throwball):
+                    colors = ['red','orange','yellow','green','blue','purple','black','white']
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                    paintball = projectile.Projectile(playerPos,selfPos,'paint',colors[random.randrange(0,8,1)])
+                    self.all_sprites.add(paintball)
+                    self.projectiles.add(paintball)
+                    self.boss.throwball= False
+            except AttributeError as e:
+                pass
 
+            
             #Testing enemy projectile collisions
             for proj in self.projectiles:
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, 33, 33)
@@ -249,7 +268,7 @@ class Main: ## __init__, game_loop
                     self.healthChanged = True
                     
                 for solid in self.Physics.collisionRects:
-                    if self.projRect.colliderect(solid):
+                    if self.projRect.colliderect(solid) and proj.proj_type is not 'paint':
                         proj.die()
                     
                 
@@ -288,15 +307,19 @@ class Main: ## __init__, game_loop
                 self.total_frames += 1
                 self.currentLevel.leveltimer +=1
                 self.mobs.update()
+                try:
+                    self.boss.livingfor+=1
+                except AttributeError as e:
+                    print e
             #Enemy projectile spawning
                 for enemy in self.mobs:                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
                     selfPos = [enemy.rect.x, enemy.rect.y]
-                    proj = projectile.Projectile(playerPos, selfPos, 'art')
+                    proj = projectile.Projectile(playerPos, selfPos, 'art',0)
                     self.projectiles.add(proj)
                     self.all_sprites.add(proj)
             
-                if(self.currentLevel.leveltimer==self.currentLevel.spawnRate):
+                if False and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob
                     self.currentLevel.leveltimer=0
                     spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
