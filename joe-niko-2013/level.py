@@ -66,6 +66,8 @@ class Boss(pygame.sprite.Sprite):
         self.takingdmg = False
         self.throwball = False #This is so main.py can throw the ball instead of level.py
         self.throwboomer = False
+        self.firetiny = False
+        self.drop_paint = False
         if(level==1):
             self.level = level
             #### ANGRY ART STUDENT ####
@@ -75,16 +77,17 @@ class Boss(pygame.sprite.Sprite):
             # Phase 2 (250-150)
             ## - Throw palette (boomerang style)
             # Phase 3 (150-50)
-            ## - Shoot paint lasers
+            ## - Shoot tiny paint balls (slow, lots of them)
             # Phase 4 (50-0)
             ## - Paint balls fall from the sky
-            self.hp = 250
+            self.hp = 350
             self.damage = 15
             self.currentphase = 0
             pygame.sprite.Sprite.__init__(self)
             self.image,self.rect = gfx.load_image("boss-art/boss.png",-1)
             self.rect = pygame.Rect(X,Y,250,250)
     def update(self):
+        self.tickcount+=1
         if(self.moving):
             self.placeholder[0] += self.dx
             self.placeholder[1] += self.dy
@@ -122,17 +125,34 @@ class Boss(pygame.sprite.Sprite):
                     self.attacking = True
                 pass
             elif(self.hp >=50):
+                if(self.currentphase ==2):
+                    ## red,orange,yellow,green,blue,purple,black,white
+                    self.next_tiny = [0,0,0,0,0,0,0,0]
+                    self.last_tiny = [0,0,0,0,0,0,0,0]
+                    self.curr_tiny = [0,0,0,0,0,0,0,0]
                 self.currentphase = 3
+                self.curr_tiny = [0,0,0,0,0,0,0,0]
+                for i in range(8):
+                    if(self.livingfor-self.last_tiny[i])>=self.next_tiny[i]:
+                        self.next_tiny[i] = random.randrange(3,8,1)
+                        self.last_tiny[i] = self.livingfor
+                        self.curr_tiny[i] = 1
+                        self.attacking = True
                 # Phase 3
-                print "Phase 3"
                 pass
             elif(self.hp > 0):
+                if(self.currentphase == 3):
+                    self.attacking=True
+                    pass
                 self.currentphase = 4
+                if(self.tickcount-self.lastattack)>20:
+                    self.drop_paint = True
+                    self.lastattack = self.tickcount
                 # Phase 4
-                print "Phase 4"
-                pass
             else:
-                self.die()
+                if(self.currentphase ==4):
+                    self.attacking=True
+                self.currentphase = 5
         if(self.attacking):
             if 1==self.currentphase:
                 self.currentAnimationFrame+=1
@@ -148,15 +168,39 @@ class Boss(pygame.sprite.Sprite):
                     self.attacking=False
                     self.throwboomer=True
                     self.currentAnimationFrame=0
+            elif 3==self.currentphase:
+                self.attacking=False
+                self.firetiny=True
+                self.currentAnimationFrame=0
+            elif 4==self.currentphase:
+                self.currentAnimationFrame+=1
+                gfx.animate(self,4)
+                if self.currentAnimationFrame==10:
+                    self.attacking=False
+                    self.currentAnimationFrame=0
+            elif 5==self.currentphase:
+                self.currentAnimationFrame+=1
+                gfx.animate(self,5)
+                print self.currentAnimationFrame
+                if self.currentAnimationFrame==9:
+                    self.die()
+                    self.attacking = False
         
         if(self.takingdmg):
-            self.counter+=1
-            if self.counter%5==0:
-                self.image,null = gfx.load_image("boss-art/throw0005.png",-1)
-            elif self.counter%5==1:
-                self.image,null = gfx.load_image("boss-art/takingdmg.png",-1)
-            if(self.counter==60):
-                self.takingdmg= False
+            if self.currentphase is not 5:
+                self.counter+=1
+                if self.counter%5==0:
+                    if 4==self.currentphase:
+                        self.image,null = gfx.load_image("boss-art/rage/rage00010.png",-1)
+                    else:
+                        self.image,null = gfx.load_image("boss-art/throw0005.png",-1)
+                elif self.counter%5==1:
+                    if 4==self.currentphase:
+                        self.image,null = gfx.load_image("boss-art/rage/takingdmg.png",-1)
+                    else:
+                        self.image,null = gfx.load_image("boss-art/takingdmg.png",-1)
+                if(self.counter==60):
+                    self.takingdmg= False
     def walkTo(self,x,y):
         self.moving = True
         
@@ -187,3 +231,5 @@ class Boss(pygame.sprite.Sprite):
             self.takingdmg=True
             self.counter =0
             self.hp -= dmg
+    def die(self):
+        print "Level 1 Boss Dead"

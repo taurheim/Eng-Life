@@ -30,8 +30,12 @@ class Projectile(pygame.sprite.Sprite):
         change_xpos=(playerPos[0])-mobPos[0]
         change_ypos=(playerPos[1])-mobPos[1]
         l = math.sqrt(change_xpos**2 + change_ypos**2)
-        tempx = ((10*change_xpos)/l)
-        tempy = ((10*change_ypos)/l)
+        if not l==0:
+            tempx = ((10*change_xpos)/l)
+            tempy = ((10*change_ypos)/l)
+        else:
+            tempx = 0
+            tempy = 0
 
         #dx,dy
         self.dx = tempx/10.0
@@ -39,7 +43,12 @@ class Projectile(pygame.sprite.Sprite):
 
 
         #velocity
-        v = 5
+        if self.proj_type == 'tiny':
+            v = 2
+        elif self.proj_type == 'drop_paint':
+            v = 3
+        else:
+            v = 5
         self.dx*=v
         self.dy*=v
 
@@ -63,6 +72,31 @@ class Projectile(pygame.sprite.Sprite):
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
             self.rect = pygame.Rect(mobPos[0],mobPos[1],175,175)
+        elif self.proj_type == 'tiny':
+            self.image,self.rect = load_image('boss-art/tiny/'+self.extra+'.png')
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],32,32)
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+        elif self.proj_type == 'drop_paint':
+            if(self.extra[0]):
+                self.image,self.rect = load_image('boss-art/ball-'+self.extra[1]+'.png')
+            else:
+                self.image,self.rect = load_image('boss-art/tiny/'+self.extra[1]+'.png')
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],0,0)
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+        elif self.proj_type == 'shadow':
+            if(self.extra[0]):
+                self.image,self.rect = load_image('boss-art/shadow-large.png')
+                self.rect = pygame.Rect(mobPos[0]-55,mobPos[1]-20,0,0)
+                self.image = pygame.transform.scale(self.image,(150,84))
+            else:
+                self.image,self.rect = load_image('boss-art/shadow-large.png')
+                self.rect = pygame.Rect(mobPos[0]-16,mobPos[1],0,0)
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+        else:
+            print "Projectile type not recognized: ",self.proj_type
             
 
         #Bounds of game
@@ -71,11 +105,15 @@ class Projectile(pygame.sprite.Sprite):
     def update(self):
         if(self.frames or self.proj_type=="boomer"):
             self.frames+=1
-            if(self.frames==90 and self.proj_type=="paint"):
+            if(self.frames==90 and (self.proj_type=="paint" or self.proj_type=="drop_paint")):
                 self.kill()
             elif(self.frames%2==0 and self.proj_type=="boomer"):
                 self.currentAnimationFrame+=1
                 gfx.animate(self,self.currentAnimationType)
+        if self.proj_type=='shadow':
+            self.frames+=1
+            if(self.frames >= self.extra[1]):
+                self.kill()
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))
@@ -113,16 +151,30 @@ class Projectile(pygame.sprite.Sprite):
                 pass
             else:
                 self.die()
-        if self.proj_type == 'paint' and self.rect.left <= self.aimingat[0]+5 and self.rect.top <= self.aimingat[1]+5 and self.rect.left >= self.aimingat[0]-5 and self.rect.top >= self.aimingat[1]-5:
+        if (self.proj_type == 'paint' or self.proj_type=='drop_paint') and self.rect.left <= self.aimingat[0]+5 and self.rect.top <= self.aimingat[1]+5 and self.rect.left >= self.aimingat[0]-5 and self.rect.top >= self.aimingat[1]-5:
             #Trying to hit here
             self.dx=0
             self.dy=0
-            self.image,null = load_image('boss-art/splat-'+self.extra+'.png')
+            if(self.proj_type == 'paint'):
+                self.image,null = load_image('boss-art/splat-'+self.extra+'.png')
+                self.rect.left-=32
+                self.rect.width = 128
+                self.rect.height = 32
+            elif(self.proj_type == 'drop_paint'):
+                self.image,null = load_image('boss-art/splat-'+self.extra[1]+'.png')
+                if self.extra[0]:
+                    self.image = pygame.transform.scale(self.image,(192,96))
+                    self.rect.left-=64
+                    self.rect.width = 192
+                    self.rect.height = 96
+                    self.rect.top-=24
+                else:
+                    self.rect.left-=40
+                    self.rect.top-=20
+                    self.rect.width = 128
+                    self.rect.height = 32
             self.frames+=1
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
-            self.rect.left-=32
-            self.rect.width = 128
-            self.rect.height = 32
     def die(self):
         self.kill()

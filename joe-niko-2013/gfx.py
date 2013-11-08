@@ -109,6 +109,12 @@ def animate(sprite, animation):
                 elif sprite.currentphase ==2:
                     filename = 'boss-art/throw-boomerang000'+str(sprite.currentAnimationFrame)+'.png'
                     sprite.image,null = load_image(filename,-1)
+                elif sprite.currentphase ==4:
+                    filename = 'boss-art/rage/rage000'+str(sprite.currentAnimationFrame)+'.png'
+                    sprite.image,null = load_image(filename,-1)
+                elif sprite.currentphase ==5:
+                    filename = 'boss-art/death/death000'+str(sprite.currentAnimationFrame+1)+'.png'
+                    sprite.image,null = load_image(filename,-1)
         else:
             print "Unable to animate sprite of type: ",spriteType
     except pygame.error:
