@@ -65,6 +65,7 @@ class Boss(pygame.sprite.Sprite):
         self.attacking = False
         self.takingdmg = False
         self.throwball = False #This is so main.py can throw the ball instead of level.py
+        self.throwboomer = False
         if(level==1):
             self.level = level
             #### ANGRY ART STUDENT ####
@@ -77,7 +78,7 @@ class Boss(pygame.sprite.Sprite):
             ## - Shoot paint lasers
             # Phase 4 (50-0)
             ## - Paint balls fall from the sky
-            self.hp = 350
+            self.hp = 250
             self.damage = 15
             self.currentphase = 0
             pygame.sprite.Sprite.__init__(self)
@@ -115,7 +116,10 @@ class Boss(pygame.sprite.Sprite):
             elif(self.hp >=150):
                 self.currentphase = 2
                 # Phase 2
-                print "Phase 2"
+                if (self.livingfor - self.lastattack)>=self.nextattack:
+                    self.nextattack = random.randrange(3,8,1)
+                    self.lastattack = self.livingfor
+                    self.attacking = True
                 pass
             elif(self.hp >=50):
                 self.currentphase = 3
@@ -130,12 +134,21 @@ class Boss(pygame.sprite.Sprite):
             else:
                 self.die()
         if(self.attacking):
-            self.currentAnimationFrame+=1
-            gfx.animate(self,1)
-            if self.currentAnimationFrame==5:
-                self.attacking=False
-                self.throwball=True
-                self.currentAnimationFrame=0
+            if 1==self.currentphase:
+                self.currentAnimationFrame+=1
+                gfx.animate(self,1)
+                if self.currentAnimationFrame==5:
+                    self.attacking=False
+                    self.throwball=True
+                    self.currentAnimationFrame=0
+            elif 2==self.currentphase:
+                self.currentAnimationFrame+=1
+                gfx.animate(self,2)
+                if self.currentAnimationFrame==10:
+                    self.attacking=False
+                    self.throwboomer=True
+                    self.currentAnimationFrame=0
+        
         if(self.takingdmg):
             self.counter+=1
             if self.counter%5==0:

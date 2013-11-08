@@ -58,16 +58,24 @@ class Projectile(pygame.sprite.Sprite):
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
             self.rect = pygame.Rect(mobPos[0],mobPos[1],0,0)
+        elif self.proj_type == 'boomer':
+            self.image,self.rect = load_image('boss-art/palette.png')
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],175,175)
             
 
         #Bounds of game
 
         self.gameRect = pygame.Rect(0,0,800,600)
     def update(self):
-        if(self.frames):
+        if(self.frames or self.proj_type=="boomer"):
             self.frames+=1
-            if(self.frames==90):
+            if(self.frames==90 and self.proj_type=="paint"):
                 self.kill()
+            elif(self.frames%2==0 and self.proj_type=="boomer"):
+                self.currentAnimationFrame+=1
+                gfx.animate(self,self.currentAnimationType)
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))
@@ -84,10 +92,10 @@ class Projectile(pygame.sprite.Sprite):
             else:
                 self.placeholder[1] -= int(self.placeholder[1])
         if self.doubleTick == True:  
-            if self.currentAnimationType is not 0 :
+            if self.currentAnimationType is not 0 and self.proj_type=='paint':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-            if self.currentAnimationFrame == 8:
+            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer'):
                 self.currentAnimationFrame=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
@@ -95,10 +103,17 @@ class Projectile(pygame.sprite.Sprite):
         else:
             self.doubleTick == True
         #print self.placeholder
-
-        if not self.gameRect.contains(self.rect):
-            self.die()
-        if self.rect.left <= self.aimingat[0]+5 and self.rect.top <= self.aimingat[1]+5 and self.rect.left >= self.aimingat[0]-5 and self.rect.top >= self.aimingat[1]-5:
+        if not self.gameRect.collidepoint(self.rect.center):
+            if self.proj_type == 'boomer' and self.extra is not "back":
+                self.dx*=-1
+                self.dy*=-1
+                self.extra="back"
+                pass
+            elif self.proj_type == "boomer":
+                pass
+            else:
+                self.die()
+        if self.proj_type == 'paint' and self.rect.left <= self.aimingat[0]+5 and self.rect.top <= self.aimingat[1]+5 and self.rect.left >= self.aimingat[0]-5 and self.rect.top >= self.aimingat[1]-5:
             #Trying to hit here
             self.dx=0
             self.dy=0
