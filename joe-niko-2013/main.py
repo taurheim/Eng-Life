@@ -67,6 +67,7 @@ class Main: ## __init__, game_loop
 
         #Health set up
 
+        self.bossHealthChanged = False
         self.killCount = 0
         self.healthBar = pygame.sprite.Sprite()
         pygame.sprite.Sprite.__init__(self.healthBar)
@@ -125,6 +126,12 @@ class Main: ## __init__, game_loop
                         self.boss.add(pygame.sprite.RenderPlain(self.boss))
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
                         self.boss.walkTo(700,250)
+                        self.bossHealthBar = pygame.sprite.Sprite()
+                        pygame.sprite.Sprite.__init__(self.healthBar)
+                        self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
+                        self.bossHealthBar.rect = (550,550,100,20)
+                        self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
+                        self.bossHealthChanged = False
                         print "Boss Spawned by Player"
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
@@ -255,10 +262,20 @@ class Main: ## __init__, game_loop
                     self.boss.throwball= False
                 if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
                     self.boss.takeDamage(5)
+                    self.bossHealthChanged = True
+                    print "Boss took 5 damage"
+
             except AttributeError as e:
                 pass
 
-            
+
+            if self.bossHealthChanged:
+                healthStr = str(self.boss.hp/35)
+                self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
+                self.bossHealthChanged = False
+                print "Boss health:"+str(self.boss.hp)
+
+
             #Testing enemy projectile collisions
             for proj in self.projectiles:
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, 33, 33)
@@ -272,7 +289,7 @@ class Main: ## __init__, game_loop
                     elif proj.proj_type == 'paint':
                         self.guy.tookDamage(1)
                         self.healthChanged = True
-                        print "Took 1 damage"
+                        print "Took 3 damage"
                         pass
                     
                 for solid in self.Physics.collisionRects:
