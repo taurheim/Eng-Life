@@ -125,16 +125,13 @@ class Main: ## __init__, game_loop
                         self.boss.add(pygame.sprite.RenderPlain(self.boss))
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
                         self.boss.walkTo(700,250)
-<<<<<<< HEAD
                         self.bossHealthBar = pygame.sprite.Sprite()
                         pygame.sprite.Sprite.__init__(self.healthBar)
                         self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
                         self.bossHealthBar.rect = (550,550,100,20)
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
                         self.bossHealthChanged = False
-=======
                         self.boss.currentphase=2
->>>>>>> ee6790ce3942693cbf102ba5263c3326175072f7
                         print "Boss Spawned by Player"
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
