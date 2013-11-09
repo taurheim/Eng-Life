@@ -77,7 +77,6 @@ class Player(pygame.sprite.Sprite):
 
     def tookDamage(self,damage):
         self.health -= damage
-        print self.health
 
     def returnPos(self):
         return self.rect.x, self.rect.yS

@@ -79,7 +79,6 @@ class Main: ## __init__, game_loop
         
     # Main loop:
     def game_loop(self):
-        
         self.running = True #If running is true, the game will play
         self.framecount = 0 #how many frames have elapsed (resets every second)
         self.total_frames = 0 #Total frames since start
@@ -98,12 +97,12 @@ class Main: ## __init__, game_loop
             ##  set to rgb(255,0,0)
             self.screen.blit(self.background, (0, 0)) #Draw background
             self.all_sprites.draw(self.screen)        #Draw sprites
-            self.projectiles.draw(self.screen)
             #COULD CLEAN THIS UP^^
             self.screen.blit(self.foreground, (0, 0)) #Draw foreground
+            self.projectiles.draw(self.screen)
             colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
-
+            
             pygame.display.flip()                     #Make it happen
 
             #Check for inputs
@@ -126,12 +125,16 @@ class Main: ## __init__, game_loop
                         self.boss.add(pygame.sprite.RenderPlain(self.boss))
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
                         self.boss.walkTo(700,250)
+<<<<<<< HEAD
                         self.bossHealthBar = pygame.sprite.Sprite()
                         pygame.sprite.Sprite.__init__(self.healthBar)
                         self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
                         self.bossHealthBar.rect = (550,550,100,20)
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
                         self.bossHealthChanged = False
+=======
+                        self.boss.currentphase=2
+>>>>>>> ee6790ce3942693cbf102ba5263c3326175072f7
                         print "Boss Spawned by Player"
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
@@ -199,6 +202,7 @@ class Main: ## __init__, game_loop
 ##              self.obstacle.fill((0, 255, 0))
 ##              self.background.blit(self.obstacle, (sbb.x,sbb.y))
 
+
             #Update movement of all sprites in the game
             self.all_sprites.update()
             
@@ -260,6 +264,43 @@ class Main: ## __init__, game_loop
                     self.all_sprites.add(paintball)
                     self.projectiles.add(paintball)
                     self.boss.throwball= False
+                elif(self.boss.throwboomer):
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                    boomer = projectile.Projectile(playerPos,selfPos,'boomer',0)
+                    self.all_sprites.add(boomer)
+                    self.projectiles.add(boomer)
+                    self.boss.throwboomer= False
+                elif(self.boss.firetiny):
+                    key = ['red','orange','yellow','green','blue','purple','black','white']
+                    loc_key = {'red':[56,128],'orange':[30,132],'yellow':[17,142],'green':[8,155],'blue':[5,170],'purple':[1,189],'black':[12,200],'white':[28,205]}
+                    fire = []
+                    for i in range(8):
+                        if(self.boss.curr_tiny[i]):
+                            fire.append(key[i])
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    print playerPos
+                    for color in fire:
+                        selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
+                        tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
+                        self.all_sprites.add(tiny)
+                        self.projectiles.add(tiny)
+                        self.boss.firetiny= False
+                elif(self.boss.drop_paint):
+                    colors = ['red','orange','yellow','green','blue','purple','black','white']
+                    randcolor = colors[random.randrange(0,8,1)]
+                    randtype = random.randrange(0,2,1)
+                    randx = random.randrange(10,790,1)
+                    randy = random.randrange(10,590,1)
+                    paintdrop = projectile.Projectile([randx,randy],[randx,0],'drop_paint',[randtype,randcolor])
+                    self.all_sprites.add(paintdrop)
+                    self.projectiles.add(paintdrop)
+                    self.boss.drop_paint = False
+
+                    #shadow
+                    shadow = projectile.Projectile([randx,randy],[randx,randy],'shadow',[randtype,(randy+32)/1.5])
+                    self.all_sprites.add(shadow)
+                    
                 if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
                     self.boss.takeDamage(5)
                     self.bossHealthChanged = True
@@ -278,8 +319,16 @@ class Main: ## __init__, game_loop
 
             #Testing enemy projectile collisions
             for proj in self.projectiles:
-                self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, 33, 33)
+                self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, proj.rect.width,proj.rect.height)
+                if(proj.proj_type=='boomer'):
+                    self.projRect = pygame.Rect(proj.rect.left+50,proj.rect.top+40,175,175)
                 self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
+                
+                #self.obstacle = pygame.Surface((self.projRect.width,self.projRect.height))
+                #self.obstacle = self.obstacle.convert()
+                #self.obstacle.fill((0, 255, 0))
+                #self.foreground.blit(self.obstacle, (self.projRect.x,self.projRect.y))
+                
                 if self.projRect.colliderect(self.playerRect):
                     if proj.proj_type == 'art':
                         proj.die()
@@ -291,9 +340,29 @@ class Main: ## __init__, game_loop
                         self.healthChanged = True
                         print "Took 3 damage"
                         pass
-                    
+                    elif proj.proj_type == 'boomer':
+                        self.guy.tookDamage(2)
+                        self.healthChanged = True
+                        print "Took 3 damage"
+                    elif proj.proj_type == 'tiny':
+                        self.guy.tookDamage(3)
+                        self.healthChanged = True
+                        proj.die()
+                        print "Took 3 damage"
+                    elif proj.proj_type == 'drop_paint' and proj.dy==0 and self.playerRect.colliderect(pygame.Rect(self.projRect.x,self.projRect.y+40,self.projRect.width,10)):
+                        self.guy.tookDamage(1)
+                        self.healthChanged = True
+                        print "Took 1 damage"
+                if proj.proj_type == "boomer" and proj.extra == "back" and proj.rect.colliderect(pygame.Rect(self.boss.rect.x+200,self.boss.rect.y+130,50,50)):
+                    proj.die()
                 for solid in self.Physics.collisionRects:
-                    if self.projRect.colliderect(solid) and proj.proj_type is not 'paint':
+                    
+##                    self.obstacle = pygame.Surface((solid.width,solid.height))
+##                    self.obstacle = self.obstacle.convert()
+##                    self.obstacle.fill((0, 255, 0))
+##                    self.foreground.blit(self.obstacle, (solid.x,solid.y))
+                    
+                    if proj.proj_type is not 'paint' and proj.proj_type is not 'boomer' and proj.proj_type is not 'drop_paint' and self.projRect.colliderect(solid) :
                         proj.die()
                     
                 
@@ -304,7 +373,6 @@ class Main: ## __init__, game_loop
 
             if self.healthChanged:
                 healthStr = str(self.guy.health/10)
-                print healthStr
                 self.healthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.healthChanged = False
 
@@ -336,6 +404,7 @@ class Main: ## __init__, game_loop
                     self.boss.livingfor+=1
                 except AttributeError as e:
                     print e
+                    pass
             #Enemy projectile spawning
                 for enemy in self.mobs:                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
