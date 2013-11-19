@@ -9,7 +9,7 @@
 #>>>>  4. 
 
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx,ai,level,random,menu
+import pygame,player,projectile,physics,ai,level,random,menu,gfx
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -76,15 +76,21 @@ class Main: ## __init__, game_loop
         self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
         self.healthChanged = False
 
+        #gfx testing
+        self.preloaded_gfx = gfx.preloadedgfx()
+        gfx.preloaded_gfx = self.preloaded_gfx
+        print gfx.preloaded_gfx.swish_down
         
     # Main loop:
     def game_loop(self):
         self.running = True #If running is true, the game will play
         self.framecount = 0 #how many frames have elapsed (resets every second)
         self.total_frames = 0 #Total frames since start
+
+        #gfx.preloadedgfx.loadbasic()
+        #print gfx.preloadedgfx.swish_down
         
         while self.running:
-
             tick_timer.tick(GAME_SETTINGS.GAME_SPEED) #tick
             self.framecount+=1 #Count frames
 
@@ -102,7 +108,6 @@ class Main: ## __init__, game_loop
             self.projectiles.draw(self.screen)
             colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
-            
             pygame.display.flip()                     #Make it happen
 
             #Check for inputs
@@ -133,6 +138,8 @@ class Main: ## __init__, game_loop
                         self.bossHealthChanged = False
                         self.boss.currentphase=2
                         print "Boss Spawned by Player"
+                    elif event.key == pygame.K_SPACE:
+                        self.pressed_leftmouse = True
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
                     if event.key == pygame.K_LEFT:        # left arrow turns left
@@ -143,8 +150,10 @@ class Main: ## __init__, game_loop
                         self.pressed_up = False
                     elif event.key == pygame.K_DOWN:      # down arrow goes down
                         self.pressed_down = False
+                    elif event.key == pygame.K_SPACE:
+                        self.pressed_leftmouse = False
                 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button==1: #Click
+                elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.pressed_leftmouse = False
@@ -276,7 +285,6 @@ class Main: ## __init__, game_loop
                         if(self.boss.curr_tiny[i]):
                             fire.append(key[i])
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
-                    print playerPos
                     for color in fire:
                         selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
                         tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
@@ -301,7 +309,6 @@ class Main: ## __init__, game_loop
                 if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
                     self.boss.takeDamage(5)
                     self.bossHealthChanged = True
-                    print "Boss took 5 damage"
 
             except AttributeError as e:
                 pass
@@ -311,7 +318,6 @@ class Main: ## __init__, game_loop
                 healthStr = str(self.boss.hp/35)
                 self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.bossHealthChanged = False
-                print "Boss health:"+str(self.boss.hp)
 
 
             #Testing enemy projectile collisions

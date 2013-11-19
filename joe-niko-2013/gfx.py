@@ -1,5 +1,6 @@
 import os,pygame,itertools
 
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('sprites', name)
     try:
@@ -11,6 +12,18 @@ def load_image(name, colorkey=None):
     image = image.convert_alpha()
     ##image.set_colorkey(image.get_at((1,1)))
     return image, image.get_rect()
+
+
+class preloadedgfx(object):
+    def __init__(self): 
+        #Load all of the basic images
+        self.swish_down = []
+        for i in range(1,12):
+            filename = 'swish-down/frame'+str(i)+'.png'
+            newimg,null = load_image(filename,-1)
+            self.swish_down.append(newimg)
+        #Swing animations
+    
 
 def animate(sprite, animation):
     try:
@@ -55,9 +68,10 @@ def animate(sprite, animation):
                 filename = "boss-art/boomer/palette"+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
-            filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
-            sprite.image,null = load_image(filename,-1)
+            sprite.image = preloaded_gfx.swish_down[sprite.currentAnimationFrame-2]
             if 'down' == animation: #down
+##                filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
+##                sprite.image,null = load_image(filename,-1)
                 pass
             elif 'left' == animation: #left
                 sprite.image = pygame.transform.rotate(sprite.image,270)
