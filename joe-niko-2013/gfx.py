@@ -18,10 +18,13 @@ class preloadedgfx(object):
     def __init__(self): 
         #Load all of the basic images
         self.swish_down = []
+        self.swish_left = []
+        self.swish_up = []
+        self.swish_right = []
         for i in range(1,12):
-            filename = 'swish-down/frame'+str(i)+'.png'
-            newimg,null = load_image(filename,-1)
+            newimg,null = load_image('swish-down/frame'+str(i)+'.png',-1)
             self.swish_down.append(newimg)
+            self.swish_left.append(pygame.transform.rotate(newimg,270))
         #Swing animations
     
 
@@ -74,7 +77,7 @@ def animate(sprite, animation):
 ##                sprite.image,null = load_image(filename,-1)
                 pass
             elif 'left' == animation: #left
-                sprite.image = pygame.transform.rotate(sprite.image,270)
+                sprite.image = preloaded_gfx.swish_left[sprite.currentAnimationFrame-2]
             elif 'right' == animation: #right
                 sprite.image = pygame.transform.rotate(sprite.image,90)
             elif 'up' == animation: #up
