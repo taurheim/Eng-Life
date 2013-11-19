@@ -76,10 +76,23 @@ class Main: ## __init__, game_loop
         self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
         self.healthChanged = False
 
+<<<<<<< HEAD
         #gfx testing
         self.preloaded_gfx = gfx.preloadedgfx()
         gfx.preloaded_gfx = self.preloaded_gfx
         print gfx.preloaded_gfx.swish_down
+=======
+        #Sounds
+
+        self.Sounds = pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
+        self.musicChannel = pygame.mixer.Channel(0)
+        self.soundsChannel1 = pygame.mixer.Channel(1)
+        self.soundsChannel2 = pygame.mixer.Channel(2)
+        self.musicSound = pygame.mixer.music.load('sounds/Kalimba.mp3')
+        pygame.mixer.music.play()
+        
+
+>>>>>>> 9e36f49e78af3c83c6792d0543cc2a458de735ac
         
     # Main loop:
     def game_loop(self):
