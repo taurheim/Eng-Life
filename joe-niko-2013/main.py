@@ -9,7 +9,7 @@
 #>>>>  4. 
 
 #Import PyGame & initialize it
-import pygame,player,projectile,physics,gfx,ai,level,random,menu
+import pygame,player,projectile,physics,ai,level,random,menu,gfx
 tick_timer = pygame.time.Clock() #This timer will cap fps and tick once every ~16ms (60fps)
 
 #GAME SETTINGS
@@ -69,6 +69,7 @@ class Main: ## __init__, game_loop
 
         self.bossHealthChanged = False
         self.killCount = 0
+        self.spawnMobs = True
         self.healthBar = pygame.sprite.Sprite()
         pygame.sprite.Sprite.__init__(self.healthBar)
         self.healthBar.image, null = gfx.load_image('health/10.png',-1)
@@ -76,15 +77,31 @@ class Main: ## __init__, game_loop
         self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
         self.healthChanged = False
 
+        #gfx testing
+        self.preloaded_gfx = gfx.preloadedgfx()
+        gfx.preloaded_gfx = self.preloaded_gfx
+        print gfx.preloaded_gfx.swish_down
+        #Sounds
+
+        self.Sounds = pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
+        self.musicChannel = pygame.mixer.Channel(0)
+        self.soundsChannel1 = pygame.mixer.Channel(1)
+        self.soundsChannel2 = pygame.mixer.Channel(2)
+        self.musicSound = pygame.mixer.music.load('sounds/Kalimba.mp3')
+        pygame.mixer.music.play()
         
     # Main loop:
     def game_loop(self):
+        #for x in range(10000):
+        #    pass
         self.running = True #If running is true, the game will play
         self.framecount = 0 #how many frames have elapsed (resets every second)
         self.total_frames = 0 #Total frames since start
+
+        #gfx.preloadedgfx.loadbasic()
+        #print gfx.preloadedgfx.swish_down
         
         while self.running:
-
             tick_timer.tick(GAME_SETTINGS.GAME_SPEED) #tick
             self.framecount+=1 #Count frames
 
@@ -102,7 +119,6 @@ class Main: ## __init__, game_loop
             self.projectiles.draw(self.screen)
             colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
-            
             pygame.display.flip()                     #Make it happen
 
             #Check for inputs
@@ -125,17 +141,15 @@ class Main: ## __init__, game_loop
                         self.boss.add(pygame.sprite.RenderPlain(self.boss))
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
                         self.boss.walkTo(700,250)
-<<<<<<< HEAD
                         self.bossHealthBar = pygame.sprite.Sprite()
                         pygame.sprite.Sprite.__init__(self.healthBar)
                         self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
                         self.bossHealthBar.rect = (550,550,100,20)
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
                         self.bossHealthChanged = False
-=======
-                        self.boss.currentphase=2
->>>>>>> ee6790ce3942693cbf102ba5263c3326175072f7
                         print "Boss Spawned by Player"
+                    elif event.key == pygame.K_SPACE:
+                        self.pressed_leftmouse = True
                         
                 elif event.type == pygame.KEYUP:    # check for key releases
                     if event.key == pygame.K_LEFT:        # left arrow turns left
@@ -146,8 +160,10 @@ class Main: ## __init__, game_loop
                         self.pressed_up = False
                     elif event.key == pygame.K_DOWN:      # down arrow goes down
                         self.pressed_down = False
+                    elif event.key == pygame.K_SPACE:
+                        self.pressed_leftmouse = False
                 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button==1: #Click
+                elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.pressed_leftmouse = False
@@ -222,8 +238,8 @@ class Main: ## __init__, game_loop
 
                 #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
-                    enemy.takedamage()
-                    self.killCount += 1
+                    if(enemy.takedamage()):
+                        self.killCount += 1
                     
                 #enemy.move sets the enemy's dx,dy, and direction
                 enemy.move(self.guy)
@@ -255,58 +271,59 @@ class Main: ## __init__, game_loop
                 else:
                     enemy.didMove(0,2)
             #Boss stuff
-            try:
-                if(self.boss.throwball):
-                    colors = ['red','orange','yellow','green','blue','purple','black','white']
-                    playerPos = [self.guy.rect.x, self.guy.rect.y]
-                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
-                    paintball = projectile.Projectile(playerPos,selfPos,'paint',colors[random.randrange(0,8,1)])
-                    self.all_sprites.add(paintball)
-                    self.projectiles.add(paintball)
-                    self.boss.throwball= False
-                elif(self.boss.throwboomer):
-                    playerPos = [self.guy.rect.x, self.guy.rect.y]
-                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
-                    boomer = projectile.Projectile(playerPos,selfPos,'boomer',0)
-                    self.all_sprites.add(boomer)
-                    self.projectiles.add(boomer)
-                    self.boss.throwboomer= False
-                elif(self.boss.firetiny):
-                    key = ['red','orange','yellow','green','blue','purple','black','white']
-                    loc_key = {'red':[56,128],'orange':[30,132],'yellow':[17,142],'green':[8,155],'blue':[5,170],'purple':[1,189],'black':[12,200],'white':[28,205]}
-                    fire = []
-                    for i in range(8):
-                        if(self.boss.curr_tiny[i]):
-                            fire.append(key[i])
-                    playerPos = [self.guy.rect.x, self.guy.rect.y]
-                    print playerPos
-                    for color in fire:
-                        selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
-                        tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
-                        self.all_sprites.add(tiny)
-                        self.projectiles.add(tiny)
-                        self.boss.firetiny= False
-                elif(self.boss.drop_paint):
-                    colors = ['red','orange','yellow','green','blue','purple','black','white']
-                    randcolor = colors[random.randrange(0,8,1)]
-                    randtype = random.randrange(0,2,1)
-                    randx = random.randrange(10,790,1)
-                    randy = random.randrange(10,590,1)
-                    paintdrop = projectile.Projectile([randx,randy],[randx,0],'drop_paint',[randtype,randcolor])
-                    self.all_sprites.add(paintdrop)
-                    self.projectiles.add(paintdrop)
-                    self.boss.drop_paint = False
+            if(self.currentLevel.level==1):
+                try:
+                    if(self.boss.attack_1): #Throwing ball
+                        colors = ['red','orange','yellow','green','blue','purple','black','white']
+                        playerPos = [self.guy.rect.x, self.guy.rect.y]
+                        selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                        paintball = projectile.Projectile(playerPos,selfPos,'paint',colors[random.randrange(0,8,1)])
+                        self.all_sprites.add(paintball)
+                        self.projectiles.add(paintball)
+                        self.boss.attack_1= False
+                    elif(self.boss.attack_2): #Boomerang
+                        playerPos = [self.guy.rect.x, self.guy.rect.y]
+                        selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                        boomer = projectile.Projectile(playerPos,selfPos,'boomer',0)
+                        self.all_sprites.add(boomer)
+                        self.projectiles.add(boomer)
+                        self.boss.attack_2= False
+                    elif(self.boss.attack_3): #Shoot tiny
+                        key = ['red','orange','yellow','green','blue','purple','black','white']
+                        loc_key = {'red':[56,128],'orange':[30,132],'yellow':[17,142],'green':[8,155],'blue':[5,170],'purple':[1,189],'black':[12,200],'white':[28,205]}
+                        fire = []
+                        for i in range(8):
+                            if(self.boss.curr_tiny[i]):
+                                fire.append(key[i])
+                        playerPos = [self.guy.rect.x, self.guy.rect.y]
+                        for color in fire:
+                            selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
+                            tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
+                            self.all_sprites.add(tiny)
+                            self.projectiles.add(tiny)
+                            self.boss.attack_3= False
+                    elif(self.boss.attack_4): #Drop paint
+                        colors = ['red','orange','yellow','green','blue','purple','black','white']
+                        randcolor = colors[random.randrange(0,8,1)]
+                        randtype = random.randrange(0,2,1)
+                        randx = random.randrange(10,790,1)
+                        randy = random.randrange(10,590,1)
+                        paintdrop = projectile.Projectile([randx,randy],[randx,0],'drop_paint',[randtype,randcolor])
+                        self.all_sprites.add(paintdrop)
+                        self.projectiles.add(paintdrop)
+                        self.boss.attack_4 = False
 
-                    #shadow
-                    shadow = projectile.Projectile([randx,randy],[randx,randy],'shadow',[randtype,(randy+32)/1.5])
-                    self.all_sprites.add(shadow)
-                    
-                if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
-                    self.boss.takeDamage(5)
-                    self.bossHealthChanged = True
-                    print "Boss took 5 damage"
+                        #shadow
+                        shadow = projectile.Projectile([randx,randy],[randx,randy],'shadow',[randtype,(randy+32)/1.5])
+                        self.all_sprites.add(shadow)
+                        
+                    if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
+                        self.boss.takeDamage(5)
+                        self.bossHealthChanged = True
 
-            except AttributeError as e:
+                except AttributeError as e:
+                    pass
+            elif(self.currentLevel==2):
                 pass
 
 
@@ -314,7 +331,6 @@ class Main: ## __init__, game_loop
                 healthStr = str(self.boss.hp/35)
                 self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.bossHealthChanged = False
-                print "Boss health:"+str(self.boss.hp)
 
 
             #Testing enemy projectile collisions
@@ -333,26 +349,21 @@ class Main: ## __init__, game_loop
                     if proj.proj_type == 'art':
                         proj.die()
                         self.guy.tookDamage(10)
-                        print "Took 10 damage"
                         self.healthChanged = True
                     elif proj.proj_type == 'paint':
                         self.guy.tookDamage(1)
                         self.healthChanged = True
-                        print "Took 3 damage"
                         pass
                     elif proj.proj_type == 'boomer':
                         self.guy.tookDamage(2)
                         self.healthChanged = True
-                        print "Took 3 damage"
                     elif proj.proj_type == 'tiny':
                         self.guy.tookDamage(3)
                         self.healthChanged = True
                         proj.die()
-                        print "Took 3 damage"
                     elif proj.proj_type == 'drop_paint' and proj.dy==0 and self.playerRect.colliderect(pygame.Rect(self.projRect.x,self.projRect.y+40,self.projRect.width,10)):
                         self.guy.tookDamage(1)
                         self.healthChanged = True
-                        print "Took 1 damage"
                 if proj.proj_type == "boomer" and proj.extra == "back" and proj.rect.colliderect(pygame.Rect(self.boss.rect.x+200,self.boss.rect.y+130,50,50)):
                     proj.die()
                 for solid in self.Physics.collisionRects:
@@ -388,14 +399,24 @@ class Main: ## __init__, game_loop
                         pygame.quit()
                         
 
-                    
-                    
-            
             #If something needs to be done every second, put it here
             if (self.framecount == 30 or self.framecount == 60):
                 self.guy.canAttack = True
             
             if(self.framecount==60):
+                print self.killCount
+                if(self.killCount>=10 and self.spawnMobs):
+                    self.spawnMobs=False
+                    self.boss = level.Boss(1000,-250,self.currentLevel.level)
+                    self.boss.add(pygame.sprite.RenderPlain(self.boss))
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
+                    self.boss.walkTo(700,250)
+                    self.bossHealthBar = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.healthBar)
+                    self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
+                    self.bossHealthBar.rect = (550,550,100,20)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
+                    self.bossHealthChanged = False
                 self.framecount=0
                 self.total_frames += 1
                 self.currentLevel.leveltimer +=1
@@ -403,7 +424,6 @@ class Main: ## __init__, game_loop
                 try:
                     self.boss.livingfor+=1
                 except AttributeError as e:
-                    print e
                     pass
             #Enemy projectile spawning
                 for enemy in self.mobs:                     
@@ -412,8 +432,8 @@ class Main: ## __init__, game_loop
                     proj = projectile.Projectile(playerPos, selfPos, 'art',0)
                     self.projectiles.add(proj)
                     self.all_sprites.add(proj)
-            
-                if False and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
+
+                if self.spawnMobs and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob
                     self.currentLevel.leveltimer=0
                     spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
@@ -438,8 +458,11 @@ def restartGame():
     MainObject.game_loop()
 
 #Load title screen
-#Run the game loop   
+#Run the game loop
+
 MainObject = Main()
+#import cProfile as profile
+#profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):
     MainObject.game_loop()
 else:
