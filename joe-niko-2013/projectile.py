@@ -17,7 +17,7 @@ def load_image(name, colorkey=None):
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self,playerPos,mobPos,proj_type,extra,):
+    def __init__(self,playerPos,mobPos,proj_type,extra):
         self.proj_type = proj_type
         self.aimingat = playerPos
         self.extra = extra
@@ -48,6 +48,9 @@ class Projectile(pygame.sprite.Sprite):
             v = 2
         elif self.proj_type == 'drop_paint':
             v = 3
+        elif self.proj_type == 'fireball':
+            v =5
+            self.dy*=-1
         else:
             v = 5
         self.dx*=v
@@ -60,7 +63,13 @@ class Projectile(pygame.sprite.Sprite):
         self.doubleTick = True
         self.currentAnimationType = 1
         self.currentAnimationFrame = 1
-        if self.proj_type == 'art':
+        if self.proj_type == 'fireball':
+            self.image,self.rect = load_image('engfireball.png')
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+            self.dx*=-1
+            self.rect = pygame.Rect(playerPos[0],playerPos[1],32,32)
+        elif self.proj_type == 'art':
             self.image, self.rect = load_image('Enemy-1/projectiles/Left.png')
             self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
         elif self.proj_type == 'paint':

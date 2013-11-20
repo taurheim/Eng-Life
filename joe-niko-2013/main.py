@@ -47,6 +47,7 @@ class Main: ## __init__, game_loop
         self.projectiles = pygame.sprite.Group() #Projectiles
         self.solids = pygame.sprite.Group() #Solids
         self.mobs = pygame.sprite.Group() #Mobs
+        self.fireballs = pygame.sprite.Group() # Player projectiles
         
         
         #inputs
@@ -55,6 +56,7 @@ class Main: ## __init__, game_loop
         self.pressed_left = False
         self.pressed_right = False
         self.pressed_leftmouse = False
+        self.pressed_rightmouse = False
 
 
         #Level set up
@@ -165,8 +167,15 @@ class Main: ## __init__, game_loop
                 
                 elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
-                elif event.type == pygame.MOUSEBUTTONUP:
+                elif(event.type == pygame.MOUSEBUTTONDOWN and event.button==3):
+                    self.pressed_rightmouse = True
+                    new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),'fireball',1)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(new_projectile))
+                    self.fireballs.add(pygame.sprite.RenderPlain(new_projectile))
+                elif event.type == pygame.MOUSEBUTTONUP and event.button==1:
                     self.pressed_leftmouse = False
+                elif event.type == pygame.MOUSEBUTTONUP and event.button==3:
+                    self.pressed_rightmouse = False
 
             ###########################################
             ### DIRECTIONS                          ###
@@ -238,7 +247,7 @@ class Main: ## __init__, game_loop
 
                 #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
-                    if(enemy.takedamage()):
+                    if(enemy.takedamage(2)):
                         self.killCount += 1
                     
                 #enemy.move sets the enemy's dx,dy, and direction
@@ -332,7 +341,16 @@ class Main: ## __init__, game_loop
                 self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.bossHealthChanged = False
 
-
+            #Testing player projectile collisions
+            for fireball in self.fireballs:
+                for mob in self.mobs:
+                    if fireball.rect.colliderect(mob.rect):
+                        if(mob.takedamage(5)):
+                            self.killCount+=1
+                if((not self.spawnMobs) and self.boss.rect.colliderect(fireball.rect)):
+                        self.boss.takeDamage(50)
+                        fireball.kill()
+                        self.bossHealthChanged = True
             #Testing enemy projectile collisions
             for proj in self.projectiles:
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, proj.rect.width,proj.rect.height)

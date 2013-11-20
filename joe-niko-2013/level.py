@@ -167,47 +167,61 @@ class Boss(pygame.sprite.Sprite):
                     self.lastattack = self.tickcount
                 # Phase 4
             else:
-                if(self.currentphase ==4):
+                if not self.currentphase==5:
                     self.attacking=True
                 self.currentphase = 5
-        elif(self.level ==2):
+        elif(self.level == 2):
             if(self.livingfor==10 and not self.moving):
                 self.walkTo(500,250)
+            if(self.hp >= 250):
+                self.currentphase = 1
+            elif(self.hp >=150):
+                self.currentphase = 2
+            elif(self.hp >=50):
+                self.currentphase = 3
+            elif(self.hp > 0):
+                self.currentphase = 4
+            else:
+                if(self.currentphase ==4):
+                    pass
         if(self.attacking):
-            if 1==self.currentphase:
-                self.currentAnimationFrame+=1
-                gfx.animate(self,1)
-                if self.currentAnimationFrame==5:
+            if(self.level ==1):
+                if 1==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,1)
+                    if self.currentAnimationFrame==5:
+                        self.attacking=False
+                        self.attack_1=True
+                        self.currentAnimationFrame=0
+                elif 2==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,2)
+                    if self.currentAnimationFrame==10:
+                        self.attacking=False
+                        self.attack_2=True
+                        self.currentAnimationFrame=0
+                elif 3==self.currentphase:
                     self.attacking=False
-                    self.attack_1=True
+                    self.attack_3=True
                     self.currentAnimationFrame=0
-            elif 2==self.currentphase:
-                self.currentAnimationFrame+=1
-                gfx.animate(self,2)
-                if self.currentAnimationFrame==10:
-                    self.attacking=False
-                    self.attack_2=True
-                    self.currentAnimationFrame=0
-            elif 3==self.currentphase:
-                self.attacking=False
-                self.attack_3=True
-                self.currentAnimationFrame=0
-            elif 4==self.currentphase:
-                self.currentAnimationFrame+=1
-                gfx.animate(self,4)
-                if self.currentAnimationFrame==10:
-                    self.attacking=False
-                    self.currentAnimationFrame=0
-            elif 5==self.currentphase:
-                self.currentAnimationFrame+=1
-                gfx.animate(self,5)
-                print self.currentAnimationFrame
-                if self.currentAnimationFrame==9:
-                    self.die()
-                    self.attacking = False
+                elif 4==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,4)
+                    if self.currentAnimationFrame==10:
+                        self.attacking=False
+                        self.currentAnimationFrame=0
+                elif 5==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,5)
+                    print self.currentAnimationFrame
+                    if self.currentAnimationFrame==9:
+                        self.die()
+                        self.attacking = False
+            elif(self.level==2):
+                pass
         
         if(self.takingdmg):
-            if self.currentphase is not 5:
+            if self.level==1 and self.currentphase is not 5:
                 self.counter+=1
                 if self.counter%5==0:
                     if 4==self.currentphase:
@@ -221,6 +235,8 @@ class Boss(pygame.sprite.Sprite):
                         self.image,null = gfx.load_image("boss-art/takingdmg.png",-1)
                 if(self.counter==60):
                     self.takingdmg= False
+            if self.level==2 and self.currentphase is not 5:
+                self.counter+=1
     def walkTo(self,x,y):
         self.moving = True
         

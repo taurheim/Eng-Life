@@ -133,6 +133,17 @@ def animate(sprite, animation):
                 elif sprite.currentphase ==5:
                     filename = 'boss-art/death/death000'+str(sprite.currentAnimationFrame+1)+'.png'
                     sprite.image,null = load_image(filename,-1)
+            if(sprite.level==2):
+                if(sprite.currentphase==1):
+                    pass
+                elif(sprite.currentphase==2):
+                    pass
+                elif(sprite.currentphase==3):
+                    pass
+                elif(sprite.currentphase==4):
+                    pass
+                elif(sprite.currentphase==5):
+                    pass
         else:
             print "Unable to animate sprite of type: ",spriteType
     except pygame.error:

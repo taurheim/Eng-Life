@@ -205,8 +205,8 @@ class Mob(pygame.sprite.Sprite):
     def die(self):
         self.kill()
 
-    def takedamage(self):
-        self.hp-=2
+    def takedamage(self,damage):
+        self.hp-=damage
         if(self.hp<=0):
             self.die()
             return True
