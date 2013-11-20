@@ -24,11 +24,15 @@ class Mob(pygame.sprite.Sprite):
         self.moving = True #Don't know if we need this but I'll keep this in here in case we want mobs to stand still
         self.forced = 0
 
+        
         self.image,self.rect = gfx.load_image("Enemy-1/Enemy-1-down.png",-1)
         self.rect = pygame.Rect(x,y,64,64)
         self.projectiles = pygame.sprite.Group()
+        self.mobtype = mobtype
         
-        pass
+        self.hp=0
+        if(mobtype=='art'):
+            self.hp=15
 
     def move(self,player):
         distancex = player.rect.x - self.rect.x
@@ -132,7 +136,7 @@ class Mob(pygame.sprite.Sprite):
     def setDir(self):
         
         
-        if self.currentAnimationType==0:
+        if self.currentAnimationType==0 and self.mobtype == 'art':
             if self.direction == 'down':
                 self.image,null = gfx.load_image('Enemy-1/down-attack/Animation-Down0001.png',-1)
             elif self.direction == 'left':
@@ -151,6 +155,27 @@ class Mob(pygame.sprite.Sprite):
                 self.image,null = gfx.load_image('Enemy-1/up-left-attack/Animation-up-left0001.png',-1)
             elif self.direction == 'upright':
                 self.image,null = gfx.load_image('Enemy-1/up-left-attack/Animation-up-left0001.png',-1)
+                self.image = pygame.transform.flip(self.image,True,False)
+            elif self.direction == 'static':
+                pass
+        if self.currentAnimationType==0 and self.mobtype == 'football':
+            if self.direction == 'down':
+                self.image,null = gfx.load_image('Enemy-2/down-attack/Animation0001.png',-1)
+            elif self.direction == 'left':
+                self.image,null = gfx.load_image('Enemy-2/left-attack/Animation0001.png',-1)
+            elif self.direction == 'right':
+                self.image,null = gfx.load_image('Enemy-2/left-attack/Animation0001.png',-1)
+            elif self.direction == 'up':
+                self.image,null = gfx.load_image('Enemy-2/up-attack/Animation0001.png',-1)
+            elif self.direction == 'downleft':
+                self.image,null = gfx.load_image('Enemy-2/down-left-attack/Animation0001.png',-1)
+            elif self.direction == 'downright':
+                self.image,null = gfx.load_image('Enemy-2/down-left-attack/Animation0001.png',-1)
+                self.image = pygame.transform.flip(self.image,True,False)
+            elif self.direction == 'upleft':
+                self.image,null = gfx.load_image('Enemy-2/up-left-attack/Animation0001.png',-1)
+            elif self.direction == 'upright':
+                self.image,null = gfx.load_image('Enemy-2/up-left-attack/Animation0001.png',-1)
                 self.image = pygame.transform.flip(self.image,True,False)
             elif self.direction == 'static':
                 pass
@@ -181,5 +206,9 @@ class Mob(pygame.sprite.Sprite):
         self.kill()
 
     def takedamage(self):
-        self.die()
+        self.hp-=2
+        if(self.hp<=0):
+            self.die()
+            return True
+        else: return False
         

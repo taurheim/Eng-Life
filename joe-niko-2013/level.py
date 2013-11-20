@@ -64,10 +64,10 @@ class Boss(pygame.sprite.Sprite):
         self.dy = 0
         self.attacking = False
         self.takingdmg = False
-        self.throwball = False #This is so main.py can throw the ball instead of level.py
-        self.throwboomer = False
-        self.firetiny = False
-        self.drop_paint = False
+        self.attack_1 = False #This is so main.py can throw the ball instead of level.py
+        self.attack_2 = False
+        self.attack_3 = False
+        self.attack_4 = False
         if(level==1):
             self.level = level
             #### ANGRY ART STUDENT ####
@@ -86,6 +86,23 @@ class Boss(pygame.sprite.Sprite):
             pygame.sprite.Sprite.__init__(self)
             self.image,self.rect = gfx.load_image("boss-art/boss.png",-1)
             self.rect = pygame.Rect(X,Y,250,250)
+        if(level==2):
+            self.level = level
+            #### FOOTBALL COACH ####
+            # Phase 1
+            ## Yells
+            # Phase 2
+            ## Summon players
+            # Phase 3
+            ## Dump gatorade
+            # Phase 4
+            ## Throw football
+            self.hp = 350
+            self.damage = 15
+            self.currentphase = 0
+            pygame.sprite.Sprite.__init__(self)
+            self.image,self.rect = gfx.load_image("coach-art/boss.png",-1)
+            self.rect = pygame.Rect(X,Y,150,150)
     def update(self):
         self.tickcount+=1
         if(self.moving):
@@ -146,31 +163,34 @@ class Boss(pygame.sprite.Sprite):
                     pass
                 self.currentphase = 4
                 if(self.tickcount-self.lastattack)>20:
-                    self.drop_paint = True
+                    self.attack_4 = True
                     self.lastattack = self.tickcount
                 # Phase 4
             else:
                 if(self.currentphase ==4):
                     self.attacking=True
                 self.currentphase = 5
+        elif(self.level ==2):
+            if(self.livingfor==10 and not self.moving):
+                self.walkTo(500,250)
         if(self.attacking):
             if 1==self.currentphase:
                 self.currentAnimationFrame+=1
                 gfx.animate(self,1)
                 if self.currentAnimationFrame==5:
                     self.attacking=False
-                    self.throwball=True
+                    self.attack_1=True
                     self.currentAnimationFrame=0
             elif 2==self.currentphase:
                 self.currentAnimationFrame+=1
                 gfx.animate(self,2)
                 if self.currentAnimationFrame==10:
                     self.attacking=False
-                    self.throwboomer=True
+                    self.attack_2=True
                     self.currentAnimationFrame=0
             elif 3==self.currentphase:
                 self.attacking=False
-                self.firetiny=True
+                self.attack_3=True
                 self.currentAnimationFrame=0
             elif 4==self.currentphase:
                 self.currentAnimationFrame+=1

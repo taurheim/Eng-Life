@@ -17,11 +17,12 @@ def load_image(name, colorkey=None):
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self,playerPos,mobPos,proj_type,extra):
+    def __init__(self,playerPos,mobPos,proj_type,extra,):
         self.proj_type = proj_type
         self.aimingat = playerPos
         self.extra = extra
         self.frames = 0
+        self.direction = extra
         
         #print playerPos,mousePos
         pygame.sprite.Sprite.__init__(self)
@@ -95,6 +96,19 @@ class Projectile(pygame.sprite.Sprite):
                 self.rect = pygame.Rect(mobPos[0]-16,mobPos[1],0,0)
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
+        elif self.proj_type == 'football':
+            if self.direction == 'up' :
+                self.image, self.rect = load_image('Enemy-2/projectiles/Up.png')
+                self.rect = pygame.Rect(mobPos[0],mobPos[1],23,45)
+            if self.direction == 'down':
+                self.image, self.rect = load_image('Enemy-2/projectiles/Down.png')
+                self.rect = pygame.Rect(mobPos[0],mobPos[1],23,45)
+            if self.direction == 'right' or self.direction == 'left' or self.direction == 'upleft' or self.direction == 'upright' or self.direction == 'downleft' or self.direction == 'downright':
+                self.image, self.rect = load_image('Enemy-2/projectiles/Left.png')
+                self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
+            colorkey = self.image.get_at((0,0))
+            self.image.set_colorkey(colorkey)
+        
         else:
             print "Projectile type not recognized: ",self.proj_type
             
