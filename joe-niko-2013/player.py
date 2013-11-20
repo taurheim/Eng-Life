@@ -145,3 +145,9 @@ class Player(pygame.sprite.Sprite):
         self.currentAnimationType = self.dir
         self.currentAnimationFrame = 0
         self.attacking = True
+
+class Healthpack(pygame.sprite.Sprite):
+    def __init__(self, X, Y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, null = gfx.load_image('health/pack.png',-1)
+        self.rect = pygame.Rect(X,Y,50,50)

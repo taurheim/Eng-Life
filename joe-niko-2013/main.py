@@ -47,6 +47,7 @@ class Main: ## __init__, game_loop
         self.projectiles = pygame.sprite.Group() #Projectiles
         self.solids = pygame.sprite.Group() #Solids
         self.mobs = pygame.sprite.Group() #Mobs
+        self.health = pygame.sprite.Group() #Health packs
         
         
         #inputs
@@ -76,6 +77,12 @@ class Main: ## __init__, game_loop
         self.healthBar.rect = (50,550,100,20)
         self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
         self.healthChanged = False
+
+        #Health pack set up
+        
+        self.healthSpawnRate = 3   #Every x seconds, a pack is spawned (only if the previous pack has been picked up)
+        self.spawnHealth = True
+        self.secondsPassed = 0
 
         #gfx testing
         self.preloaded_gfx = gfx.preloadedgfx()
@@ -340,10 +347,10 @@ class Main: ## __init__, game_loop
                     self.projRect = pygame.Rect(proj.rect.left+50,proj.rect.top+40,175,175)
                 self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
                 
-                #self.obstacle = pygame.Surface((self.projRect.width,self.projRect.height))
-                #self.obstacle = self.obstacle.convert()
-                #self.obstacle.fill((0, 255, 0))
-                #self.foreground.blit(self.obstacle, (self.projRect.x,self.projRect.y))
+                self.obstacle = pygame.Surface((self.projRect.width,self.projRect.height))
+                self.obstacle = self.obstacle.convert()
+                self.obstacle.fill((0, 255, 0))
+                self.foreground.blit(self.obstacle, (self.projRect.x,self.projRect.y))
                 
                 if self.projRect.colliderect(self.playerRect):
                     if proj.proj_type == 'art':
@@ -375,7 +382,16 @@ class Main: ## __init__, game_loop
                     
                     if proj.proj_type is not 'paint' and proj.proj_type is not 'boomer' and proj.proj_type is not 'drop_paint' and self.projRect.colliderect(solid) :
                         proj.die()
-                    
+
+                        
+            #Testing healthpack collisions
+            for pack in self.health:
+                
+                if pack.rect.colliderect(self.guy.rect):
+                    pack.kill()
+                    self.guy.tookDamage(-50)
+                    self.healthChanged = True
+                    self.spawnHealth = True
                 
             #Tick level
             self.currentLevel.tick()
@@ -383,6 +399,10 @@ class Main: ## __init__, game_loop
             #Health bar logic
 
             if self.healthChanged:
+                if self.guy.health > 100:
+                    self.guy.health = 100
+                elif self.guy.health < 0:
+                    self.guy.health = 0
                 healthStr = str(self.guy.health/10)
                 self.healthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.healthChanged = False
@@ -404,6 +424,18 @@ class Main: ## __init__, game_loop
                 self.guy.canAttack = True
             
             if(self.framecount==60):
+                self.secondsPassed += 1
+                if self.secondsPassed%self.healthSpawnRate==0 and self.spawnHealth:
+                    X = random.randint(50,750)
+                    Y = random.randint(50,550)
+                    pack = player.Healthpack(X,Y)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(pack))
+                    self.health.add(pygame.sprite.RenderPlain(pack))
+                    self.spawnHealth = False
+                    print "Health spawned at "+str(X)+","+str(Y)
+                    
+
+                
                 print self.killCount
                 if(self.killCount>=10 and self.spawnMobs):
                     self.spawnMobs=False
@@ -426,7 +458,7 @@ class Main: ## __init__, game_loop
                 except AttributeError as e:
                     pass
             #Enemy projectile spawning
-                for enemy in self.mobs:                     
+                for enemy in self.mobs :                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
                     selfPos = [enemy.rect.x, enemy.rect.y]
                     proj = projectile.Projectile(playerPos, selfPos, 'art',0)
