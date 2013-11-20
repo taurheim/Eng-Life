@@ -28,7 +28,9 @@ class Mob(pygame.sprite.Sprite):
         self.rect = pygame.Rect(x,y,64,64)
         self.projectiles = pygame.sprite.Group()
         
-        pass
+        self.hp=0
+        if(mobtype=='art'):
+            self.hp=15
 
     def move(self,player):
         distancex = player.rect.x - self.rect.x
@@ -181,5 +183,9 @@ class Mob(pygame.sprite.Sprite):
         self.kill()
 
     def takedamage(self):
-        self.die()
+        self.hp-=2
+        if(self.hp<=0):
+            self.die()
+            return True
+        else: return False
         

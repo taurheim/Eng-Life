@@ -69,6 +69,7 @@ class Main: ## __init__, game_loop
 
         self.bossHealthChanged = False
         self.killCount = 0
+        self.spawnMobs = True
         self.healthBar = pygame.sprite.Sprite()
         pygame.sprite.Sprite.__init__(self.healthBar)
         self.healthBar.image, null = gfx.load_image('health/10.png',-1)
@@ -146,7 +147,6 @@ class Main: ## __init__, game_loop
                         self.bossHealthBar.rect = (550,550,100,20)
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
                         self.bossHealthChanged = False
-                        self.boss.currentphase=2
                         print "Boss Spawned by Player"
                     elif event.key == pygame.K_SPACE:
                         self.pressed_leftmouse = True
@@ -238,8 +238,8 @@ class Main: ## __init__, game_loop
 
                 #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
-                    enemy.takedamage()
-                    self.killCount += 1
+                    if(enemy.takedamage()):
+                        self.killCount += 1
                     
                 #enemy.move sets the enemy's dx,dy, and direction
                 enemy.move(self.guy)
@@ -404,6 +404,19 @@ class Main: ## __init__, game_loop
                 self.guy.canAttack = True
             
             if(self.framecount==60):
+                print self.killCount
+                if(self.killCount>=10 and self.spawnMobs):
+                    self.spawnMobs=False
+                    self.boss = level.Boss(1000,-250,self.currentLevel.level)
+                    self.boss.add(pygame.sprite.RenderPlain(self.boss))
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.boss))
+                    self.boss.walkTo(700,250)
+                    self.bossHealthBar = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.healthBar)
+                    self.bossHealthBar.image, null = gfx.load_image('health/10.png',-1)
+                    self.bossHealthBar.rect = (550,550,100,20)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
+                    self.bossHealthChanged = False
                 self.framecount=0
                 self.total_frames += 1
                 self.currentLevel.leveltimer +=1
@@ -411,7 +424,6 @@ class Main: ## __init__, game_loop
                 try:
                     self.boss.livingfor+=1
                 except AttributeError as e:
-                    print e
                     pass
             #Enemy projectile spawning
                 for enemy in self.mobs:                     
@@ -421,7 +433,7 @@ class Main: ## __init__, game_loop
                     self.projectiles.add(proj)
                     self.all_sprites.add(proj)
 
-                if False and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
+                if self.spawnMobs and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob
                     self.currentLevel.leveltimer=0
                     spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]

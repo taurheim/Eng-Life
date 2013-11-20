@@ -71,13 +71,14 @@ def animate(sprite, animation):
                 filename = "boss-art/boomer/palette"+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
+            #filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
+            #sprite.image,null = load_image(filename,-1)
             sprite.image = preloaded_gfx.swish_down[sprite.currentAnimationFrame-2]
             if 'down' == animation: #down
-##                filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
-##                sprite.image,null = load_image(filename,-1)
                 pass
             elif 'left' == animation: #left
-                sprite.image = preloaded_gfx.swish_left[sprite.currentAnimationFrame-2]
+                sprite.image = pygame.transform.rotate(sprite.image,270)
+                #sprite.image = preloaded_gfx.swish_left[sprite.currentAnimationFrame-2]
             elif 'right' == animation: #right
                 sprite.image = pygame.transform.rotate(sprite.image,90)
             elif 'up' == animation: #up
