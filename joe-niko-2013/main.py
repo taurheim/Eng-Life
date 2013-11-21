@@ -22,7 +22,7 @@ class Main: ## __init__, game_loop
 
     
     # Initialize Game
-    def __init__(self):
+    def __init__(self,levelNumber):
         pygame.init() #Initialize PyGame
 
         #Initialize Displays
@@ -47,11 +47,7 @@ class Main: ## __init__, game_loop
         self.projectiles = pygame.sprite.Group() #Projectiles
         self.solids = pygame.sprite.Group() #Solids
         self.mobs = pygame.sprite.Group() #Mobs
-<<<<<<< HEAD
         self.health = pygame.sprite.Group() #Health packs
-=======
-        self.fireballs = pygame.sprite.Group() # Player projectiles
->>>>>>> 1d33fb40fed4236bee5dd2541f1de50bdc6d51aa
         
         
         #inputs
@@ -60,16 +56,16 @@ class Main: ## __init__, game_loop
         self.pressed_left = False
         self.pressed_right = False
         self.pressed_leftmouse = False
-        self.pressed_rightmouse = False
 
 
         #Level set up
-        self.currentLevel = level.Level(1,self.background)
+        self.currentLevel = level.Level(levelNumber,self.background)
         for obstacle in self.currentLevel.obstacles:
             obstacle.height-=48
             self.Physics.addBody(obstacle)
         self.background.blit(self.currentLevel.bg,(0,0))
-        self.foreground.blit(self.currentLevel.fg,(0, 0))
+        if self.currentLevel.fg:                        #Only blit the foreground if there actually is one
+            self.foreground.blit(self.currentLevel.fg,(0, 0))
 
         #Health set up
 
@@ -177,15 +173,8 @@ class Main: ## __init__, game_loop
                 
                 elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
-                elif(event.type == pygame.MOUSEBUTTONDOWN and event.button==3):
-                    self.pressed_rightmouse = True
-                    new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),'fireball',1)
-                    self.all_sprites.add(pygame.sprite.RenderPlain(new_projectile))
-                    self.fireballs.add(pygame.sprite.RenderPlain(new_projectile))
-                elif event.type == pygame.MOUSEBUTTONUP and event.button==1:
+                elif event.type == pygame.MOUSEBUTTONUP:
                     self.pressed_leftmouse = False
-                elif event.type == pygame.MOUSEBUTTONUP and event.button==3:
-                    self.pressed_rightmouse = False
 
             ###########################################
             ### DIRECTIONS                          ###
@@ -257,7 +246,7 @@ class Main: ## __init__, game_loop
 
                 #If the player's attack hits the enemy, take damage
                 if(self.guy.attacking and enemy.rect.colliderect(self.swish.createSwishBox())):
-                    if(enemy.takedamage(2)):
+                    if(enemy.takedamage(5)):
                         self.killCount += 1
                     
                 #enemy.move sets the enemy's dx,dy, and direction
@@ -337,7 +326,7 @@ class Main: ## __init__, game_loop
                         self.all_sprites.add(shadow)
                         
                     if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
-                        self.boss.takeDamage(5)
+                        self.boss.takeDamage(50)
                         self.bossHealthChanged = True
 
                 except AttributeError as e:
@@ -350,17 +339,12 @@ class Main: ## __init__, game_loop
                 healthStr = str(self.boss.hp/35)
                 self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.bossHealthChanged = False
+                if self.boss.hp <= 0:
+                    self.boss.kill()
+                    restartGame(2)      #IMPORTANT!
+                                        #This recreates the entire main object and loads the next level.
 
-            #Testing player projectile collisions
-            for fireball in self.fireballs:
-                for mob in self.mobs:
-                    if fireball.rect.colliderect(mob.rect):
-                        if(mob.takedamage(5)):
-                            self.killCount+=1
-                if((not self.spawnMobs) and self.boss.rect.colliderect(fireball.rect)):
-                        self.boss.takeDamage(50)
-                        fireball.kill()
-                        self.bossHealthChanged = True
+
             #Testing enemy projectile collisions
             for proj in self.projectiles:
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, proj.rect.width,proj.rect.height)
@@ -368,10 +352,10 @@ class Main: ## __init__, game_loop
                     self.projRect = pygame.Rect(proj.rect.left+50,proj.rect.top+40,175,175)
                 self.playerRect = pygame.Rect(self.guy.rect.left, self.guy.rect.top, 64, 64)
                 
-                self.obstacle = pygame.Surface((self.projRect.width,self.projRect.height))
-                self.obstacle = self.obstacle.convert()
-                self.obstacle.fill((0, 255, 0))
-                self.foreground.blit(self.obstacle, (self.projRect.x,self.projRect.y))
+##                self.obstacle = pygame.Surface((self.projRect.width,self.projRect.height))
+##                self.obstacle = self.obstacle.convert()
+##                self.obstacle.fill((0, 255, 0))
+##                self.foreground.blit(self.obstacle, (self.projRect.x,self.projRect.y))
                 
                 if self.projRect.colliderect(self.playerRect):
                     if proj.proj_type == 'art':
@@ -458,7 +442,7 @@ class Main: ## __init__, game_loop
 
                 
                 print self.killCount
-                if(self.killCount>=10 and self.spawnMobs):
+                if(self.killCount>=2 and self.spawnMobs):
                     self.spawnMobs=False
                     self.boss = level.Boss(1000,-250,self.currentLevel.level)
                     self.boss.add(pygame.sprite.RenderPlain(self.boss))
@@ -482,7 +466,8 @@ class Main: ## __init__, game_loop
                 for enemy in self.mobs :                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
                     selfPos = [enemy.rect.x, enemy.rect.y]
-                    proj = projectile.Projectile(playerPos, selfPos, 'art',0)
+                    print self.currentLevel.mobType
+                    proj = projectile.Projectile(playerPos, selfPos, self.currentLevel.mobType,enemy.direction)
                     self.projectiles.add(proj)
                     self.all_sprites.add(proj)
 
@@ -490,7 +475,7 @@ class Main: ## __init__, game_loop
                     #Spawn a Mob
                     self.currentLevel.leveltimer=0
                     spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
-                    self.newmob = ai.Mob(spawnloc[0],spawnloc[1], "art")
+                    self.newmob = ai.Mob(spawnloc[0],spawnloc[1], self.currentLevel.mobType)
                     self.mobs.add(pygame.sprite.RenderPlain(self.newmob))
                     self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
                     print "Mob Spawned"
@@ -505,15 +490,15 @@ class Main: ## __init__, game_loop
 
 
 
-def restartGame():
+def restartGame(levelNumber):
     MainObject = 0
-    MainObject = Main()
+    MainObject = Main(levelNumber)
     MainObject.game_loop()
 
 #Load title screen
 #Run the game loop
 
-MainObject = Main()
+MainObject = Main(1)
 #import cProfile as profile
 #profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):

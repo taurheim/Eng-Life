@@ -33,6 +33,8 @@ class Mob(pygame.sprite.Sprite):
         self.hp=0
         if(mobtype=='art'):
             self.hp=15
+        if(mobtype=='football'):
+            self.hp=15
 
     def move(self,player):
         distancex = player.rect.x - self.rect.x
@@ -182,7 +184,7 @@ class Mob(pygame.sprite.Sprite):
     def attack(self, player):
         playerPos = [player.rect.x, player.rect.y]
         selfPos = [self.rect.x, self.rect.y]
-        self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
+        self.projectile = projectile.Projectile(playerPos, selfPos, self.mobType)
         self.projectiles = pygame.sprite.Group()
         self.projectiles.add(self.projectile)
     def update(self):

@@ -7,7 +7,7 @@ class Level(object):
         
         self.level = level #int, which level we are currently on.
         self.obstacles = []
-
+        self.fg = False
         #### MOBS ####
         # 1. Art Student
         # 2. Commerce Student
@@ -22,7 +22,6 @@ class Level(object):
         # 4. Football Coach
         # 5. Dr. Smith
 
-        self.mobType = 0
         self.spawnRate = 0
         self.spawnPoints = []
 
@@ -41,7 +40,10 @@ class Level(object):
             self.spawnPoints = [(800,600),(0,600),(300,600)]
             
         if 2==level:
-            pass
+            self.bg,null = gfx.load_image("Level-2.png",-1)
+            self.mobType = 'football'
+            self.spawnRate = 5
+            self.spawnPoints = [(0,0),(800,0),(300,600)]
         if 3==level:
             pass
         if 4==level:
