@@ -48,6 +48,7 @@ class Main: ## __init__, game_loop
         self.solids = pygame.sprite.Group() #Solids
         self.mobs = pygame.sprite.Group() #Mobs
         self.health = pygame.sprite.Group() #Health packs
+        self.fireballs = pygame.sprite.Group() # Player projectiles
         
         
         #inputs
@@ -56,6 +57,7 @@ class Main: ## __init__, game_loop
         self.pressed_left = False
         self.pressed_right = False
         self.pressed_leftmouse = False
+        self.pressed_rightmouse = False
 
 
         #Level set up
@@ -173,8 +175,16 @@ class Main: ## __init__, game_loop
                 
                 elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    self.pressed_leftmouse = False
+                elif(event.type == pygame.MOUSEBUTTONDOWN and event.button==3):
+                     self.pressed_rightmouse = True
+                     new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),'fireball',1)
+                     self.all_sprites.add(pygame.sprite.RenderPlain(new_projectile))
+                     self.fireballs.add(pygame.sprite.RenderPlain(new_projectile))
+                elif event.type == pygame.MOUSEBUTTONUP and event.button==1:
+                     self.pressed_leftmouse = False
+                elif event.type == pygame.MOUSEBUTTONUP and event.button==3:
+                     self.pressed_rightmouse = False
+
 
             ###########################################
             ### DIRECTIONS                          ###
@@ -344,6 +354,16 @@ class Main: ## __init__, game_loop
                     restartGame(2)      #IMPORTANT!
                                         #This recreates the entire main object and loads the next level.
 
+            #Testing player projectile collisions
+            for fireball in self.fireballs:
+                for mob in self.mobs:
+                    if fireball.rect.colliderect(mob.rect):
+                        if(mob.takedamage(5)):
+                            self.killCount+=1
+                if((not self.spawnMobs) and self.boss.rect.colliderect(fireball.rect)):
+                        self.boss.takeDamage(50)
+                        fireball.kill()
+                        self.bossHealthChanged = True
 
             #Testing enemy projectile collisions
             for proj in self.projectiles:
