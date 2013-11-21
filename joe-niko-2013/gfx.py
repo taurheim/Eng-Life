@@ -135,7 +135,8 @@ def animate(sprite, animation):
                     sprite.image,null = load_image(filename,-1)
             if(sprite.level==2):
                 if(sprite.currentphase==1):
-                    pass
+                    filename= 'coach-art/throw'+str(sprite.currentAnimationFrame/5)+'.png'
+                    sprite.image,null = load_image(filename,-1)
                 elif(sprite.currentphase==2):
                     pass
                 elif(sprite.currentphase==3):

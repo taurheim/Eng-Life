@@ -518,7 +518,7 @@ def restartGame(levelNumber):
 #Load title screen
 #Run the game loop
 
-MainObject = Main(1)
+MainObject = Main(2)
 #import cProfile as profile
 #profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):
