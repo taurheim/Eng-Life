@@ -16,7 +16,6 @@ class Mob(pygame.sprite.Sprite):
         self.projectileTimer = 0
         self.currentAnimationFrame = 0
         self.currentAnimationType = 'static'
-        self.direction = 'up'
         self.framecounter = 0
         self.dx = 0
         self.dy = 0
@@ -24,17 +23,21 @@ class Mob(pygame.sprite.Sprite):
         self.moving = True #Don't know if we need this but I'll keep this in here in case we want mobs to stand still
         self.forced = 0
 
-        
-        self.image,self.rect = gfx.load_image("Enemy-1/Enemy-1-down.png",-1)
+        self.direction = 'up'
         self.rect = pygame.Rect(x,y,64,64)
         self.projectiles = pygame.sprite.Group()
         self.mobtype = mobtype
-        
+        self.setDir()
+
         self.hp=0
         if(mobtype=='art'):
+            self.image,null = gfx.load_image('Enemy-1/down-attack/Animation-Down0001.png',-1)
+
             self.hp=15
-        if(mobtype=='football'):
+        elif(mobtype=='football'):
             self.hp=15
+        elif(mobtype=='commerce'):
+            self.image,null = gfx.load_image('Enemy-3/Down-attack/Animation0001.png',-1)
 
     def move(self,player):
         distancex = player.rect.x - self.rect.x
@@ -181,10 +184,32 @@ class Mob(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.image,True,False)
             elif self.direction == 'static':
                 pass
+        if (self.currentAnimationType==0 or self.currentAnimationType=='static') and self.mobtype == 'commerce':
+            if self.direction == 'down':
+                self.image,null = gfx.load_image('Enemy-3/Down-attack/Animation0001.png',-1)
+            elif self.direction == 'left':
+                self.image,null = gfx.load_image('Enemy-3/Right-attack/Animation0001.png',-1)
+                self.image = pygame.transform.flip(self.image,True,False)
+            elif self.direction == 'right':
+                self.image,null = gfx.load_image('Enemy-3/Right-attack/Animation0001.png',-1)
+            elif self.direction == 'up':
+                self.image,null = gfx.load_image('Enemy-3/Up-attack/Animation0001.png',-1)
+            elif self.direction == 'downleft':
+                self.image,null = gfx.load_image('Enemy-3/Down-right-attack/Animation0001.png',-1)
+                self.image = pygame.transform.flip(self.image,True,False)
+            elif self.direction == 'downright':
+                self.image,null = gfx.load_image('Enemy-3/Down-right-attack/Animation0001.png',-1)
+            elif self.direction == 'upleft':
+                self.image,null = gfx.load_image('Enemy-3/Up-right-attack/Animation0001.png',-1)
+                self.image = pygame.transform.flip(self.image,True,False)
+            elif self.direction == 'upright':
+                self.image,null = gfx.load_image('Enemy-3/Up-right-attack/Animation0001.png',-1)
+            elif self.direction == 'static':
+                pass
     def attack(self, player):
         playerPos = [player.rect.x, player.rect.y]
         selfPos = [self.rect.x, self.rect.y]
-        self.projectile = projectile.Projectile(playerPos, selfPos, self.mobType)
+        self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
         self.projectiles = pygame.sprite.Group()
         self.projectiles.add(self.projectile)
     def update(self):

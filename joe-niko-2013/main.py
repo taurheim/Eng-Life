@@ -341,7 +341,7 @@ class Main: ## __init__, game_loop
                 self.bossHealthChanged = False
                 if self.boss.hp <= 0:
                     self.boss.kill()
-                    restartGame(2)      #IMPORTANT!
+                    restartgame(2)      #IMPORTANT!
                                         #This recreates the entire main object and loads the next level.
 
 
@@ -442,7 +442,7 @@ class Main: ## __init__, game_loop
 
                 
                 print self.killCount
-                if(self.killCount>=2 and self.spawnMobs):
+                if(self.killCount>=10 and self.spawnMobs):
                     self.spawnMobs=False
                     self.boss = level.Boss(1000,-250,self.currentLevel.level)
                     self.boss.add(pygame.sprite.RenderPlain(self.boss))
@@ -462,14 +462,17 @@ class Main: ## __init__, game_loop
                     self.boss.livingfor+=1
                 except AttributeError as e:
                     pass
-            #Enemy projectile spawning
+            #Enemy projectile spawning/attacking
                 for enemy in self.mobs :                     
                     playerPos = [self.guy.rect.x, self.guy.rect.y]
                     selfPos = [enemy.rect.x, enemy.rect.y]
                     print self.currentLevel.mobType
                     proj = projectile.Projectile(playerPos, selfPos, self.currentLevel.mobType,enemy.direction)
+                    enemy.currentAnimationType = 1
+                    enemy.currentAnimationFrame = 0
                     self.projectiles.add(proj)
                     self.all_sprites.add(proj)
+                    
 
                 if self.spawnMobs and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
                     #Spawn a Mob

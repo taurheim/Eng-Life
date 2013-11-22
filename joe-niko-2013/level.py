@@ -36,7 +36,7 @@ class Level(object):
             self.obstacles.append(pygame.Rect(634,197,65,62))
 
             self.mobType='art'
-            self.spawnRate = 5
+            self.spawnRate = 2
             self.spawnPoints = [(800,600),(0,600),(300,600)]
             
         if 2==level:

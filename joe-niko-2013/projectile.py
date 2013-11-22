@@ -23,7 +23,7 @@ class Projectile(pygame.sprite.Sprite):
         self.extra = extra
         self.frames = 0
         self.direction = extra
-        
+
         #print playerPos,mousePos
         pygame.sprite.Sprite.__init__(self)
 
@@ -69,7 +69,7 @@ class Projectile(pygame.sprite.Sprite):
             self.image.set_colorkey(colorkey)
             self.dx*=-1
             self.rect = pygame.Rect(playerPos[0],playerPos[1],32,32)
-        elif self.proj_type == 'art':
+        elif self.proj_type == 'art' or self.proj_type == 'commerce':
             self.image, self.rect = load_image('Enemy-1/projectiles/Left.png')
             self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
         elif self.proj_type == 'paint':
@@ -152,14 +152,22 @@ class Projectile(pygame.sprite.Sprite):
                 self.placeholder[1] -= int(self.placeholder[1])
             else:
                 self.placeholder[1] -= int(self.placeholder[1])
+
+        if self.frames >= 90:
+            self.kill()
+
+        
         if self.doubleTick == True:  
             if self.currentAnimationType is not 0 and self.proj_type=='paint':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer'):
+            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art'):
                 self.currentAnimationFrame=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
+            if self.proj_type == 'art':
+                self.currentAnimationFrame += 1
+                gfx.animate(self,self.currentAnimationType)
             self.doubleTick == False
         else:
             self.doubleTick == True

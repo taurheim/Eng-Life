@@ -34,7 +34,7 @@ def animate(sprite, animation):
             sprite.currentAnimationType=animation
             sprite.currentAnimationFrame=0
         spriteType = sprite.__class__.__name__
-
+    
         if "Player" == spriteType:
             if 'down' == animation: #down
                 filename = 'player-melee-down/frame'+str(sprite.currentAnimationFrame)+'.png'
@@ -91,7 +91,65 @@ def animate(sprite, animation):
                 sprite.image = pygame.transform.rotate(sprite.image,245)
             elif 'upright' == animation: #upright
                 sprite.image = pygame.transform.rotate(sprite.image,135)
-        elif "Mob" == spriteType:
+        elif "Mob" == spriteType and sprite.mobtype == 'football':
+            if 'down' == animation: #down
+                filename = 'Enemy-2/down-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'left' == animation: #left
+                filename = 'Enemy-2/left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'right' == animation: #right
+                filename = 'Enemy-2/left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'up' == animation: #up
+                filename = 'Enemy-2/up-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'downleft' == animation: #downleft
+                filename = 'Enemy-2/down-left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'downright' == animation: #downright
+                filename = 'Enemy-2/down-left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'upleft' == animation: #upleft
+                filename = 'Enemy-2/up-left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'upright' == animation: #upright
+                filename = 'Enemy-2/up-left-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+        elif "Mob" == spriteType and sprite.mobtype == 'commerce':
+            animation = sprite.direction
+            if 'down' == animation: #down
+                filename = 'Enemy-3/Down-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'left' == animation: #left
+                filename = 'Enemy-3/Right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'right' == animation: #right
+                filename = 'Enemy-3/Right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'up' == animation: #up
+                filename = 'Enemy-3/Up-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'downleft' == animation: #downleft
+                filename = 'Enemy-3/Down-right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'downright' == animation: #downright
+                filename = 'Enemy-3/Down-right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif 'upleft' == animation: #upleft
+                filename = 'Enemy-3/Up-right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+                sprite.image = pygame.transform.flip(sprite.image,True,False)
+            elif 'upright' == animation: #upright
+                filename = 'Enemy-3/Up-right-attack/Animation000'+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+        elif "Mob" == spriteType and sprite.mobtype == 'art':
+            animation = sprite.direction
             if 'down' == animation: #down
                 filename = 'Enemy-1/down-attack/Animation-Down000'+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
@@ -145,7 +203,7 @@ def animate(sprite, animation):
                 elif(sprite.currentphase==5):
                     pass
         else:
-            print "Unable to animate sprite of type: ",spriteType
+            print "Unable to animate sprite of type: ",spriteType+sprite.mobtype
     except pygame.error:
         #sprite.currentAnimationType=0
         sprite.currentAnimationFrame=0
