@@ -347,6 +347,31 @@ class Main: ## __init__, game_loop
                     self.all_sprites.add(football)
                     self.projectiles.add(football)
                     self.boss.attack_1 = False
+                elif(self.boss.attack_2):
+                    #Summoning players
+                    for i in range(random.randrange(10)):
+                        spawnloc = self.currentLevel.spawnPoints[random.randrange(len(self.currentLevel.spawnPoints))]
+                        self.newmob = ai.Mob(spawnloc[0],spawnloc[1], self.currentLevel.mobType)
+                        self.mobs.add(pygame.sprite.RenderPlain(self.newmob))
+                        self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
+                    self.boss.attack_2 = False
+                elif(self.boss.attack_3):
+                    yelltype = random.randrange(2)
+                    #Yelling
+                    bossPos = [self.boss.rect.x-128,self.boss.rect.y-64]
+                    yell = projectile.Projectile(bossPos,bossPos,'yell',yelltype)
+                    self.all_sprites.add(yell)
+                    self.projectiles.add(yell)
+                    self.boss.attack_3 = False
+                    self.boss.attack_4 = yelltype
+                    self.boss.attack_5 = True
+
+                if self.boss.attack_5: #attack_4 :: 0 = stop moving, 1 = keep moving
+                    if (not(self.boss.attack_4) and (self.guy.moving or self.guy.attacking)) or (self.boss.attack_4 and not(self.guy.moving)):
+                        self.guy.tookDamage(1)
+                        self.healthChanged = True
+                    else:
+                        pass
                 
                 if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
                     self.boss.takeDamage(50)
@@ -373,7 +398,11 @@ class Main: ## __init__, game_loop
                         self.bossHealthChanged = True
 
             #Testing enemy projectile collisions
+            if not self.spawnMobs:
+                self.boss.attack_5 = False
             for proj in self.projectiles:
+                if(proj.proj_type=='yell'):
+                    self.boss.attack_5 = True
                 self.projRect = pygame.Rect(proj.rect.left, proj.rect.top, proj.rect.width,proj.rect.height)
                 if(proj.proj_type=='boomer'):
                     self.projRect = pygame.Rect(proj.rect.left+50,proj.rect.top+40,175,175)

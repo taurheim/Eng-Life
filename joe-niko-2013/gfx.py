@@ -202,7 +202,8 @@ def animate(sprite, animation):
                     filename= 'coach-art/throw'+str(sprite.currentAnimationFrame/5)+'.png'
                     sprite.image,null = load_image(filename,-1)
                 elif(sprite.currentphase==2):
-                    pass
+                    filename='coach-art/blow'+str(sprite.currentAnimationFrame/5)+'.png'
+                    sprite.image,null = load_image(filename,-1)
                 elif(sprite.currentphase==3):
                     pass
                 elif(sprite.currentphase==4):

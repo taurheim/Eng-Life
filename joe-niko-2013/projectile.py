@@ -121,6 +121,12 @@ class Projectile(pygame.sprite.Sprite):
             self.image = pygame.image.load('sprites/football/frame0.png').convert_alpha()
             self.rect = pygame.Rect(mobPos[0],mobPos[1],32,32)
             self.frames=1
+        elif self.proj_type == 'yell':
+            if(self.extra):
+                self.image = pygame.image.load('sprites/coach-art/keepmoving.png').convert_alpha()
+            else:
+                self.image = pygame.image.load('sprites/coach-art/stopmoving.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
         else:
             print "Projectile type not recognized: ",self.proj_type
             
@@ -142,6 +148,10 @@ class Projectile(pygame.sprite.Sprite):
         if self.proj_type=='shadow':
             self.frames+=1
             if(self.frames >= self.extra[1]):
+                self.kill()
+        elif self.proj_type=='yell':
+            self.frames+=1
+            if(self.frames >= 8*60):
                 self.kill()
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy

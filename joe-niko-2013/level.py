@@ -43,7 +43,7 @@ class Level(object):
             self.bg,null = gfx.load_image("Level-2.png",-1)
             self.mobType = 'football'
             self.spawnRate = 5
-            self.spawnPoints = [(0,0),(800,0),(300,600)]
+            self.spawnPoints = [(-250,-250),(800,0),(300,600),(-250,300),(-250,800),(1000,1000)]
         if 3==level:
             pass
         if 4==level:
@@ -70,6 +70,7 @@ class Boss(pygame.sprite.Sprite):
         self.attack_2 = False
         self.attack_3 = False
         self.attack_4 = False
+        self.attack_5 = False
         if(level==1):
             self.level = level
             #### ANGRY ART STUDENT ####
@@ -92,13 +93,11 @@ class Boss(pygame.sprite.Sprite):
             self.level = level
             #### FOOTBALL COACH ####
             # Phase 1
-            ## Yells
+            ## Throw football
             # Phase 2
             ## Summon players
             # Phase 3
-            ## Dump gatorade
-            # Phase 4
-            ## Throw football
+            ## Yell
             self.hp = 350
             self.damage = 15
             self.currentphase = 0
@@ -183,10 +182,16 @@ class Boss(pygame.sprite.Sprite):
                     self.attacking=True
             elif(self.hp >=150):
                 self.currentphase = 2
-            elif(self.hp >=50):
+                if (self.livingfor - self.lastattack)>=self.nextattack:
+                    self.nextattack = random.randrange(3,8,1)
+                    self.lastattack = self.livingfor
+                    self.attacking=True
+            elif(self.hp >=0):
                 self.currentphase = 3
-            elif(self.hp > 0):
-                self.currentphase = 4
+                if (self.livingfor - self.lastattack)>=self.nextattack:
+                    self.nextattack = random.randrange(8,15,1)
+                    self.lastattack = self.livingfor
+                    self.attacking=True
             else:
                 if(self.currentphase ==4):
                     pass
@@ -231,6 +236,19 @@ class Boss(pygame.sprite.Sprite):
                         self.attacking=False
                         self.attack_1=True
                         self.currentAnimationFrame=0
+                elif 2==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,1)
+                    if(self.currentAnimationFrame==10):
+                        self.attacking=False
+                        self.attack_2=True
+                        self.currentAnimationFrame=0
+                elif 3==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,1)
+                    self.attacking=False
+                    self.attack_3=True
+                    self.currentAnimationFrame=0
         
         if(self.takingdmg):
             if self.level==1 and self.currentphase is not 5:
