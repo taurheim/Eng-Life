@@ -132,6 +132,9 @@ class Projectile(pygame.sprite.Sprite):
         elif self.proj_type == 'fire':
             self.image = pygame.image.load('sprites/fire.png').convert_alpha()
             self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
+        elif self.proj_type == 'fireseed':
+            self.image = pygame.image.load('sprites/fireseed.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
         else:
             print "Projectile type not recognized: ",self.proj_type
             

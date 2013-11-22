@@ -50,7 +50,7 @@ class Main: ## __init__, game_loop
         self.health = pygame.sprite.Group() #Health packs
         self.fireballs = pygame.sprite.Group() # Player projectiles
         self.fire = pygame.sprite.Group() #Fire, used for boss #3
-        self.orig_fire = pygame.sprite.Group() #Fire starter, used for boss #3
+        self.flameseeds = pygame.sprite.Group() #Fire starter, used for boss #3
         
         
         #inputs
@@ -381,54 +381,61 @@ class Main: ## __init__, game_loop
                     
             elif(self.currentLevel.level==3 and not self.spawnMobs):
                 if(self.boss.attack_1):
-                    #attack_type = random.randrange(0,9)
-                    attack_type = 1
+                    #Remove all seeds
+                    for seed in self.flameseeds:
+                        seed.kill()
+                    attack_type = self.boss.attack_3
                     ## LEGEND
                     # 0 : flames go right in 3 lines
                     # 1 : flames go left in 3 lines
                     # 2 : flames go from the bottom right and bottom left to opposite corners
-                    # 3 : flames go in a huge line down the center left to right
-                    # 4 : flames go in a huge line down the center right to left
-                    # 5 : flames go up in 3 lines
-                    # 6 : flames go down in 3 lines
-                    # 7 : flames go in two huge lines right
-                    # 8 : flames go in two huge lines left
-                    if 0==attack_type:
+                    # 3 : flames go from the top right and top left to opposite corners
+                    # 4 : flames go in a huge line down the center left to right
+                    # 5 : flames go in a huge line down the center right to left
+                    # 6 : flames go up in 3 lines
+                    # 7 : flames go down in 3 lines
+                    # 8 : flames go in two huge lines right
+                    # 9 : flames go in two huge lines left
+                    if 0==attack_type: #l>r
                         numflames = 6
                         flamePos = [[0,100],[0,132],[0,300],[0,332],[0,450],[0,482]]
                         flameDir = [[1,0],[1,0],[1,0],[1,0],[1,0],[1,0]]
-                    elif 1==attack_type:
+                    elif 1==attack_type: #r>l
                         numflames = 6
                         flamePos = [[800,100],[800,132],[800,300],[800,332],[800,450],[800,482]]
                         flameDir = [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0]]
-                    elif 2==attack_type:
+                    elif 2==attack_type: #diag
                         numflames = 4
                         flamePos = [[0,580],[20,600],[800,580],[780,600]]
                         flameDir = [[1,-1],[1,-1],[-1,-1],[-1,-1]]
-                    elif 3==attack_type:
+                    elif 3==attack_type: #diag
                         numflames = 4
                         flamePos = [[0,20],[20,0],[800,20],[780,0]]
                         flameDir = [[1,1],[1,1],[-1,1],[-1,1]]
                     elif 4==attack_type:
                         numflames = 6
-                        flamePos = []
-                        flameDir = []
+                        flamePos = [[0,200],[0,240],[0,280],[0,320],[0,360],[0,400]]
+                        flameDir = [[1,0],[1,0],[1,0],[1,0],[1,0],[1,0]]
                     elif 5==attack_type:
                         numflames = 6
-                        flamePos = []
-                        flameDir = []
+                        flamePos = [[800,200],[800,240],[800,280],[800,320],[800,360],[800,400]]
+                        flameDir = [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0]]
                     elif 6==attack_type:
                         numflames = 6
-                        flamePos = []
-                        flameDir = []
+                        flamePos = [[100,0],[132,0],[400,0],[432,0],[650,0],[682,0]]
+                        flameDir = [[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]
                     elif 7==attack_type:
                         numflames = 6
-                        flamePos = []
-                        flameDir = []
+                        flamePos = [[100,600],[132,600],[400,600],[432,600],[650,600],[682,600]]
+                        flameDir = [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
                     elif 8==attack_type:
                         numflames = 6
-                        flamePos = []
-                        flameDir = []
+                        flamePos = [[0,100],[0,132],[0,164],[0,500],[0,468],[0,436]]
+                        flameDir = [[1,0],[1,0],[1,0],[1,0],[1,0],[1,0]]
+                    elif 9==attack_type:
+                        numflames = 6
+                        flamePos = [[800,100],[800,132],[800,164],[800,500],[800,468],[800,436]]
+                        flameDir = [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0]]
                         
                     for i in range(numflames):
                         flame = projectile.Projectile(flamePos[i],flamePos[i],'fire',flameDir[i])
@@ -436,7 +443,44 @@ class Main: ## __init__, game_loop
                         self.fire.add(flame)
                     self.boss.attack_1 = False
                 elif self.boss.attacking and not self.boss.attack_4:
-                    print "Start Animation"
+                    self.boss.attack_3 = random.randrange(0,10)
+                    attack_type = self.boss.attack_3
+                    
+                    if 0==attack_type:
+                        numseeds = 3
+                        flamePos = [[0,100],[0,300],[0,450]]
+                    elif 1==attack_type:
+                        numseeds = 3
+                        flamePos = [[800,100],[720,300],[720,450]]
+                    elif 2==attack_type:
+                        numseeds = 2
+                        flamePos = [[0,520],[720,520]]
+                    elif 3==attack_type:
+                        numseeds = 2
+                        flamePos = [[0,20],[720,20]]
+                    elif 4==attack_type:
+                        numseeds = 4
+                        flamePos = [[0,200],[0,250],[0,300],[0,350]]
+                    elif 5==attack_type:
+                        numseeds = 4
+                        flamePos = [[720,200],[720,250],[720,300],[720,350]]
+                    elif 6==attack_type:
+                        numseeds = 3
+                        flamePos = [[100,0],[400,0],[650,0]]
+                    elif 7==attack_type:
+                        numseeds = 3
+                        flamePos = [[100,520],[400,520],[650,520]]
+                    elif 8==attack_type:
+                        numseeds = 2
+                        flamePos = [[0,100],[0,500]]
+                    elif 9==attack_type:
+                        numseeds = 2
+                        flamePos = [[720,100],[720,500]]
+                        
+                    for i in range(numseeds):
+                        flameseed = projectile.Projectile(flamePos[i],flamePos[i],'fireseed',0)
+                        self.all_sprites.add(flameseed)
+                        self.flameseeds.add(flameseed)
                     self.boss.attack_4 = True
 
 
