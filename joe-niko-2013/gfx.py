@@ -67,8 +67,14 @@ def animate(sprite, animation):
             if(sprite.proj_type == 'art'):
                 filename = "Enemy-1/projectiles/frames/"+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
-            if(sprite.proj_type == 'boomer'):
+            elif(sprite.proj_type == 'boomer'):
                 filename = "boss-art/boomer/palette"+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
+            elif(sprite.proj_type == 'boss_football'):
+                frame = str(sprite.currentAnimationFrame)
+                if sprite.currentAnimationFrame>5:
+                    frame = '0'
+                filename= "football/frame"+frame+'.png'
                 sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
             #filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'

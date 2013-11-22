@@ -289,61 +289,68 @@ class Main: ## __init__, game_loop
                 else:
                     enemy.didMove(0,2)
             #Boss stuff
-            if(self.currentLevel.level==1):
-                try:
-                    if(self.boss.attack_1): #Throwing ball
-                        colors = ['red','orange','yellow','green','blue','purple','black','white']
-                        playerPos = [self.guy.rect.x, self.guy.rect.y]
-                        selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
-                        paintball = projectile.Projectile(playerPos,selfPos,'paint',colors[random.randrange(0,8,1)])
-                        self.all_sprites.add(paintball)
-                        self.projectiles.add(paintball)
-                        self.boss.attack_1= False
-                    elif(self.boss.attack_2): #Boomerang
-                        playerPos = [self.guy.rect.x, self.guy.rect.y]
-                        selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
-                        boomer = projectile.Projectile(playerPos,selfPos,'boomer',0)
-                        self.all_sprites.add(boomer)
-                        self.projectiles.add(boomer)
-                        self.boss.attack_2= False
-                    elif(self.boss.attack_3): #Shoot tiny
-                        key = ['red','orange','yellow','green','blue','purple','black','white']
-                        loc_key = {'red':[56,128],'orange':[30,132],'yellow':[17,142],'green':[8,155],'blue':[5,170],'purple':[1,189],'black':[12,200],'white':[28,205]}
-                        fire = []
-                        for i in range(8):
-                            if(self.boss.curr_tiny[i]):
-                                fire.append(key[i])
-                        playerPos = [self.guy.rect.x, self.guy.rect.y]
-                        for color in fire:
-                            selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
-                            tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
-                            self.all_sprites.add(tiny)
-                            self.projectiles.add(tiny)
-                            self.boss.attack_3= False
-                    elif(self.boss.attack_4): #Drop paint
-                        colors = ['red','orange','yellow','green','blue','purple','black','white']
-                        randcolor = colors[random.randrange(0,8,1)]
-                        randtype = random.randrange(0,2,1)
-                        randx = random.randrange(10,790,1)
-                        randy = random.randrange(10,590,1)
-                        paintdrop = projectile.Projectile([randx,randy],[randx,0],'drop_paint',[randtype,randcolor])
-                        self.all_sprites.add(paintdrop)
-                        self.projectiles.add(paintdrop)
-                        self.boss.attack_4 = False
+            if(self.currentLevel.level==1 and not self.spawnMobs):
+                if(self.boss.attack_1): #Throwing ball
+                    colors = ['red','orange','yellow','green','blue','purple','black','white']
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                    paintball = projectile.Projectile(playerPos,selfPos,'paint',colors[random.randrange(0,8,1)])
+                    self.all_sprites.add(paintball)
+                    self.projectiles.add(paintball)
+                    self.boss.attack_1= False
+                elif(self.boss.attack_2): #Boomerang
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    selfPos = [self.boss.rect.x+125, self.boss.rect.y+125]
+                    boomer = projectile.Projectile(playerPos,selfPos,'boomer',0)
+                    self.all_sprites.add(boomer)
+                    self.projectiles.add(boomer)
+                    self.boss.attack_2= False
+                elif(self.boss.attack_3): #Shoot tiny
+                    key = ['red','orange','yellow','green','blue','purple','black','white']
+                    loc_key = {'red':[56,128],'orange':[30,132],'yellow':[17,142],'green':[8,155],'blue':[5,170],'purple':[1,189],'black':[12,200],'white':[28,205]}
+                    fire = []
+                    for i in range(8):
+                        if(self.boss.curr_tiny[i]):
+                            fire.append(key[i])
+                    playerPos = [self.guy.rect.x, self.guy.rect.y]
+                    for color in fire:
+                        selfPos = [self.boss.rect.x+loc_key[color][0], self.boss.rect.y+loc_key[color][1]]
+                        tiny = projectile.Projectile(playerPos,selfPos,'tiny',color)
+                        self.all_sprites.add(tiny)
+                        self.projectiles.add(tiny)
+                        self.boss.attack_3= False
+                elif(self.boss.attack_4): #Drop paint
+                    colors = ['red','orange','yellow','green','blue','purple','black','white']
+                    randcolor = colors[random.randrange(0,8,1)]
+                    randtype = random.randrange(0,2,1)
+                    randx = random.randrange(10,790,1)
+                    randy = random.randrange(10,590,1)
+                    paintdrop = projectile.Projectile([randx,randy],[randx,0],'drop_paint',[randtype,randcolor])
+                    self.all_sprites.add(paintdrop)
+                    self.projectiles.add(paintdrop)
+                    self.boss.attack_4 = False
 
-                        #shadow
-                        shadow = projectile.Projectile([randx,randy],[randx,randy],'shadow',[randtype,(randy+32)/1.5])
-                        self.all_sprites.add(shadow)
+                    #shadow
+                    shadow = projectile.Projectile([randx,randy],[randx,randy],'shadow',[randtype,(randy+32)/1.5])
+                    self.all_sprites.add(shadow)
                         
-                    if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
-                        self.boss.takeDamage(50)
-                        self.bossHealthChanged = True
-
-                except AttributeError as e:
-                    pass
-            elif(self.currentLevel==2):
-                pass
-
+                if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
+                    self.boss.takeDamage(50)
+                    self.bossHealthChanged = True
+                    
+            elif(self.currentLevel.level==2 and not self.spawnMobs):
+                if(self.boss.attack_1):
+                    #Throwing football
+                    playerPos = [self.guy.rect.x,self.guy.rect.y]
+                    selfPos = [self.boss.rect.x+50,self.boss.rect.y+50]
+                    football = projectile.Projectile(playerPos,selfPos,'boss_football',0)
+                    self.all_sprites.add(football)
+                    self.projectiles.add(football)
+                    self.boss.attack_1 = False
+                
+                if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
+                    self.boss.takeDamage(50)
+                    self.bossHealthChanged = True
 
             if self.bossHealthChanged:
                 healthStr = str(self.boss.hp/35)
