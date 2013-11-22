@@ -177,6 +177,10 @@ class Boss(pygame.sprite.Sprite):
                 self.walkTo(500,250)
             if(self.hp >= 250):
                 self.currentphase = 1
+                if (self.livingfor - self.lastattack)>=self.nextattack:
+                    self.nextattack = random.randrange(3,8,1)
+                    self.lastattack = self.livingfor
+                    self.attacking=True
             elif(self.hp >=150):
                 self.currentphase = 2
             elif(self.hp >=50):
@@ -220,7 +224,13 @@ class Boss(pygame.sprite.Sprite):
                         self.die()
                         self.attacking = False
             elif(self.level==2):
-                pass
+                if 1==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,1)
+                    if(self.currentAnimationFrame==10):
+                        self.attacking=False
+                        self.attack_1=True
+                        self.currentAnimationFrame=0
         
         if(self.takingdmg):
             if self.level==1 and self.currentphase is not 5:
@@ -239,6 +249,12 @@ class Boss(pygame.sprite.Sprite):
                     self.takingdmg= False
             if self.level==2 and self.currentphase is not 5:
                 self.counter+=1
+                if self.counter%5==0:
+                    self.image,null = gfx.load_image("coach-art/boss.png",-1)
+                elif self.counter%5==1:
+                    self.image,null = gfx.load_image("coach-art/boss-hit.png",-1)
+                if(self.counter==60):
+                    self.takingdmg= False
     def walkTo(self,x,y):
         self.moving = True
         

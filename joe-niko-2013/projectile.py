@@ -117,7 +117,10 @@ class Projectile(pygame.sprite.Sprite):
                 self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)
             colorkey = self.image.get_at((0,0))
             self.image.set_colorkey(colorkey)
-        
+        elif self.proj_type == 'boss_football':
+            self.image = pygame.image.load('sprites/football/frame0.png').convert_alpha()
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],32,32)
+            self.frames=1
         else:
             print "Projectile type not recognized: ",self.proj_type
             
@@ -131,6 +134,9 @@ class Projectile(pygame.sprite.Sprite):
             if(self.frames==90 and (self.proj_type=="paint" or self.proj_type=="drop_paint")):
                 self.kill()
             elif(self.frames%2==0 and self.proj_type=="boomer"):
+                self.currentAnimationFrame+=1
+                gfx.animate(self,self.currentAnimationType)
+            elif(self.frames%2==0 and self.proj_type=="boss_football"):
                 self.currentAnimationFrame+=1
                 gfx.animate(self,self.currentAnimationType)
         if self.proj_type=='shadow':
@@ -161,7 +167,11 @@ class Projectile(pygame.sprite.Sprite):
             if self.currentAnimationType is not 0 and self.proj_type=='paint':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
+<<<<<<< HEAD
             if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art'):
+=======
+            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
+>>>>>>> 9b94d262fa4ee043f26358e59b448e9f70bab336
                 self.currentAnimationFrame=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
