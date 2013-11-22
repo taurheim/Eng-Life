@@ -45,9 +45,9 @@ class Level(object):
             self.spawnRate = 5
             self.spawnPoints = [(-250,-250),(800,0),(300,600),(-250,300),(-250,800),(1000,1000)]
         if 3==level:
-            self.bg,null = gfx.load_image("Level-2.png",-1)
-            self.mobType = 'art'
-            self.spawnRate = 5
+            self.bg,null = gfx.load_image("Level-3.png",-1)
+            self.mobType = 'commerce'
+            self.spawnRate = 1
             self.spawnPoints = [(800,600),(0,600),(300,600)]
         if 4==level:
             pass

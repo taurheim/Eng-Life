@@ -207,12 +207,7 @@ class Mob(pygame.sprite.Sprite):
                 self.image,null = gfx.load_image('Enemy-3/Up-right-attack/Animation0001.png',-1)
             elif self.direction == 'static':
                 pass
-    def attack(self, player):
-        playerPos = [player.rect.x, player.rect.y]
-        selfPos = [self.rect.x, self.rect.y]
-        self.projectile = projectile.Projectile(playerPos, selfPos, 'art')
-        self.projectiles = pygame.sprite.Group()
-        self.projectiles.add(self.projectile)
+
     def update(self):
         self.framecounter+=1
         self.projectileTimer+=1

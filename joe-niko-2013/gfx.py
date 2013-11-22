@@ -76,6 +76,9 @@ def animate(sprite, animation):
                     frame = '0'
                 filename= "football/frame"+frame+'.png'
                 sprite.image,null = load_image(filename,-1)
+            elif(sprite.proj_type == 'commerce'):
+                filename = "Enemy-3/Projectile/"+str(sprite.currentAnimationFrame)+'.png'
+                sprite.image,null = load_image(filename,-1)
         elif "Swish" == spriteType:
             #filename = 'swish-down/frame'+str(sprite.currentAnimationFrame)+'.png'
             #sprite.image,null = load_image(filename,-1)

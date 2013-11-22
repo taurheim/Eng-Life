@@ -11,12 +11,15 @@ class Swish(pygame.sprite.Sprite):
         self.image, self.rect = gfx.load_image('swish-down/frame1.png',-1)
 
         self.dir = 'down'
+        self.proj_type = 'swish'
+        self.canDoDamage = True
         
         self.rect = pygame.Rect(X,Y,128,128)
         fullname = os.path.join('sprites', 'swish-down/frame1.png')
         self.image = pygame.image.load(fullname)
         self.image.convert()
-
+    def die(self):
+        self.kill()
     def update(self):
 
         #Positioning required to make the swish look realistic

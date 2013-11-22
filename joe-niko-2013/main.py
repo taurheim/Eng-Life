@@ -508,6 +508,10 @@ class Main: ## __init__, game_loop
                     elif proj.proj_type == 'drop_paint' and proj.dy==0 and self.playerRect.colliderect(pygame.Rect(self.projRect.x,self.projRect.y+40,self.projRect.width,10)):
                         self.guy.tookDamage(1)
                         self.healthChanged = True
+                    elif proj.proj_type == 'commerce':
+                        self.guy.tookDamage(10)
+                        self.healthChanged = True
+                        proj.die()
                 if proj.proj_type == "boomer" and proj.extra == "back" and proj.rect.colliderect(pygame.Rect(self.boss.rect.x+200,self.boss.rect.y+130,50,50)):
                     proj.die()
                 for solid in self.Physics.collisionRects:
@@ -595,15 +599,16 @@ class Main: ## __init__, game_loop
                 except AttributeError as e:
                     pass
             #Enemy projectile spawning/attacking
-                for enemy in self.mobs :                     
-                    playerPos = [self.guy.rect.x, self.guy.rect.y]
-                    selfPos = [enemy.rect.x, enemy.rect.y]
-                    print self.currentLevel.mobType
-                    proj = projectile.Projectile(playerPos, selfPos, self.currentLevel.mobType,enemy.direction)
-                    enemy.currentAnimationType = 1
-                    enemy.currentAnimationFrame = 0
-                    self.projectiles.add(proj)
-                    self.all_sprites.add(proj)
+                for enemy in self.mobs:
+                        playerPos = [self.guy.rect.x, self.guy.rect.y]
+                        selfPos = [enemy.rect.x, enemy.rect.y]
+                        print self.currentLevel.mobType
+                        proj = projectile.Projectile(playerPos, selfPos, self.currentLevel.mobType,enemy.direction)
+                        enemy.currentAnimationType = 1
+                        enemy.currentAnimationFrame = 0
+                        self.projectiles.add(proj)
+                        self.all_sprites.add(proj)
+
                     
 
                 if self.spawnMobs and (self.currentLevel.leveltimer==self.currentLevel.spawnRate):
