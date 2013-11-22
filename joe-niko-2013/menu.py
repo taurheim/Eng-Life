@@ -54,10 +54,13 @@ class TitleScreen():
 
 
 class deathScreen():
-    def __init__(self):
+    def __init__(self,dead,level):
         self.screensurface = pygame.Surface((500,300))
         self.screensurface.convert()
-        self.image,null = gfx.load_image("menus/death.png",-1)
+        if dead == True:
+            self.image,null = gfx.load_image("menus/death.png",-1)
+        else:
+            self.image,null = gfx.load_image('menus/level'+str(level)+'win.png',-1)
         self.playRect = pygame.Rect(170,380,210,50)
         self.quitRect = pygame.Rect(530,380,80,50)
     def screen_loop(self,screen):
@@ -79,6 +82,7 @@ class deathScreen():
                     elif self.quitRect.collidepoint(mouse):
                         self.running = False
                         return False
+
                 
                 
             

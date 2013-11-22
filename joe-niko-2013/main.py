@@ -491,8 +491,13 @@ class Main: ## __init__, game_loop
                 self.bossHealthChanged = False
                 if self.boss.hp <= 0:
                     self.boss.kill()
-                    restartGame(self.currentLevel.level+1)      #IMPORTANT!
-                                        #This recreates the entire main object and loads the next level.
+                    self.menuScreen = menu.deathScreen(False,self.currentLevel.level)
+                    self.running = False
+                    if MainObject.menuScreen.screen_loop(MainObject.screen):
+                        restartGame(self.currentLevel.level+1)
+                        return
+                    else:
+                        pygame.quit()                                        #This recreates the entire main object and loads the next level.
             #Boss 3 Flames
             for flame in self.fire:
                 #Fire "extra" value
@@ -595,10 +600,10 @@ class Main: ## __init__, game_loop
             #Death conditions
                 
                 if healthStr == '0':
-                    self.deathScreen = menu.deathScreen()
+                    self.deathScreen = menu.deathScreen(True,self.currentLevel.level)
                     self.running = False
                     if MainObject.deathScreen.screen_loop(MainObject.screen):
-                        restartGame()
+                        restartGame(self.currentLevel.level)
                         return
                     else:
                         pygame.quit()
@@ -682,7 +687,7 @@ def restartGame(levelNumber):
 #Load title screen
 #Run the game loop
 
-MainObject = Main(3)
+MainObject = Main(1)
 #import cProfile as profile
 #profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):
