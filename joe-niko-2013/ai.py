@@ -36,7 +36,7 @@ class Mob(pygame.sprite.Sprite):
             self.hp=15
         elif(mobtype=='football'):
             self.hp=15
-            self.image,null = gfx.load_image('Enemy-2/Enemy-2-Down.jpg',-1)
+            self.image,null = gfx.load_image('Enemy-2/down-attack/Animation0001.png',-1)
         elif(mobtype=='commerce'):
             self.image,null = gfx.load_image('Enemy-3/Down-attack/Animation0001.png',-1)
 

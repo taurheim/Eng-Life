@@ -210,6 +210,10 @@ def animate(sprite, animation):
                     pass
                 elif(sprite.currentphase==5):
                     pass
+            if(sprite.level==3):
+                if(sprite.currentphase==1):
+                    filename='boss-fleisig/frame'+str(sprite.currentAnimationFrame/20)+'.png'
+                    sprite.image,null = load_image(filename,-1)
         else:
             print "Unable to animate sprite of type: ",spriteType+sprite.mobtype
     except pygame.error:

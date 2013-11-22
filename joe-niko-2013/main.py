@@ -49,6 +49,8 @@ class Main: ## __init__, game_loop
         self.mobs = pygame.sprite.Group() #Mobs
         self.health = pygame.sprite.Group() #Health packs
         self.fireballs = pygame.sprite.Group() # Player projectiles
+        self.fire = pygame.sprite.Group() #Fire, used for boss #3
+        self.orig_fire = pygame.sprite.Group() #Fire starter, used for boss #3
         
         
         #inputs
@@ -376,16 +378,90 @@ class Main: ## __init__, game_loop
                 if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
                     self.boss.takeDamage(50)
                     self.bossHealthChanged = True
+                    
+            elif(self.currentLevel.level==3 and not self.spawnMobs):
+                if(self.boss.attack_1):
+                    #attack_type = random.randrange(0,9)
+                    attack_type = 1
+                    ## LEGEND
+                    # 0 : flames go right in 3 lines
+                    # 1 : flames go left in 3 lines
+                    # 2 : flames go from the bottom right and bottom left to opposite corners
+                    # 3 : flames go in a huge line down the center left to right
+                    # 4 : flames go in a huge line down the center right to left
+                    # 5 : flames go up in 3 lines
+                    # 6 : flames go down in 3 lines
+                    # 7 : flames go in two huge lines right
+                    # 8 : flames go in two huge lines left
+                    if 0==attack_type:
+                        numflames = 6
+                        flamePos = [[0,100],[0,132],[0,300],[0,332],[0,450],[0,482]]
+                        flameDir = [[1,0],[1,0],[1,0],[1,0],[1,0],[1,0]]
+                    elif 1==attack_type:
+                        numflames = 6
+                        flamePos = [[800,100],[800,132],[800,300],[800,332],[800,450],[800,482]]
+                        flameDir = [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0]]
+                    elif 2==attack_type:
+                        numflames = 4
+                        flamePos = [[0,580],[20,600],[800,580],[780,600]]
+                        flameDir = [[1,-1],[1,-1],[-1,-1],[-1,-1]]
+                    elif 3==attack_type:
+                        numflames = 4
+                        flamePos = [[0,20],[20,0],[800,20],[780,0]]
+                        flameDir = [[1,1],[1,1],[-1,1],[-1,1]]
+                    elif 4==attack_type:
+                        numflames = 6
+                        flamePos = []
+                        flameDir = []
+                    elif 5==attack_type:
+                        numflames = 6
+                        flamePos = []
+                        flameDir = []
+                    elif 6==attack_type:
+                        numflames = 6
+                        flamePos = []
+                        flameDir = []
+                    elif 7==attack_type:
+                        numflames = 6
+                        flamePos = []
+                        flameDir = []
+                    elif 8==attack_type:
+                        numflames = 6
+                        flamePos = []
+                        flameDir = []
+                        
+                    for i in range(numflames):
+                        flame = projectile.Projectile(flamePos[i],flamePos[i],'fire',flameDir[i])
+                        self.all_sprites.add(flame)
+                        self.fire.add(flame)
+                    self.boss.attack_1 = False
+                elif self.boss.attacking and not self.boss.attack_4:
+                    print "Start Animation"
+                    self.boss.attack_4 = True
 
+
+            
             if self.bossHealthChanged:
                 healthStr = str(self.boss.hp/35)
                 self.bossHealthBar.image, null = gfx.load_image('health/'+healthStr+'.png',-1)
                 self.bossHealthChanged = False
                 if self.boss.hp <= 0:
                     self.boss.kill()
-                    restartgame(2)      #IMPORTANT!
+                    restartGame(self.currentLevel.level+1)      #IMPORTANT!
                                         #This recreates the entire main object and loads the next level.
+            #Boss 3 Flames
+            for flame in self.fire:
+                #Fire "extra" value
+                ## extra[0] : change in x value each time
+                ## extra[1] : change in y value each time
+                newpos = [flame.rect.x+(flame.extra[0]*16),flame.rect.y+(flame.extra[1]*16)]
+                if(newpos[0]<800 and newpos[0]>0 and newpos[1]<600 and newpos[1]>0):
+                    newflame = projectile.Projectile(newpos,newpos,'fire',flame.extra)
+                    self.fire.remove(flame)
+                    self.all_sprites.add(newflame)
+                    self.fire.add(newflame)
 
+            
             #Testing player projectile collisions
             for fireball in self.fireballs:
                 for mob in self.mobs:
@@ -498,7 +574,7 @@ class Main: ## __init__, game_loop
 
                 
                 print self.killCount
-                if(self.killCount>=10 and self.spawnMobs):
+                if(self.killCount>=2 and self.spawnMobs):
                     self.spawnMobs=False
                     self.boss = level.Boss(1000,-250,self.currentLevel.level)
                     self.boss.add(pygame.sprite.RenderPlain(self.boss))
@@ -557,7 +633,7 @@ def restartGame(levelNumber):
 #Load title screen
 #Run the game loop
 
-MainObject = Main(2)
+MainObject = Main(3)
 #import cProfile as profile
 #profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):

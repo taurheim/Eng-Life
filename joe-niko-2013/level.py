@@ -45,7 +45,10 @@ class Level(object):
             self.spawnRate = 5
             self.spawnPoints = [(-250,-250),(800,0),(300,600),(-250,300),(-250,800),(1000,1000)]
         if 3==level:
-            pass
+            self.bg,null = gfx.load_image("Level-2.png",-1)
+            self.mobType = 'art'
+            self.spawnRate = 5
+            self.spawnPoints = [(800,600),(0,600),(300,600)]
         if 4==level:
             pass
         if 5==level:
@@ -104,6 +107,17 @@ class Boss(pygame.sprite.Sprite):
             pygame.sprite.Sprite.__init__(self)
             self.image,self.rect = gfx.load_image("coach-art/boss.png",-1)
             self.rect = pygame.Rect(X,Y,150,150)
+        if(level==3):
+            #### DR. FLEISIG ####
+            # Phase 1
+            ## Shoot Fire
+            self.level = level
+            self.hp = 200
+            self.damage = 15
+            self.currentphase= 0
+            pygame.sprite.Sprite.__init__(self)
+            self.image,self.rect = gfx.load_image("boss-fleisig/boss.png",-1)
+            self.rect = pygame.Rect(X,Y,209,182)
     def update(self):
         self.tickcount+=1
         if(self.moving):
@@ -186,7 +200,7 @@ class Boss(pygame.sprite.Sprite):
                     self.nextattack = random.randrange(3,8,1)
                     self.lastattack = self.livingfor
                     self.attacking=True
-            elif(self.hp >=0):
+            elif(self.hp > 0):
                 self.currentphase = 3
                 if (self.livingfor - self.lastattack)>=self.nextattack:
                     self.nextattack = random.randrange(8,15,1)
@@ -195,6 +209,16 @@ class Boss(pygame.sprite.Sprite):
             else:
                 if(self.currentphase ==4):
                     pass
+        elif(self.level ==3):
+            if(self.livingfor==10 and not self.moving):
+                self.walkTo(100,300)
+            if(self.hp > 0):
+                self.currentphase = 1
+                if (self.livingfor - self.lastattack)>=self.nextattack:
+                    self.nextattack = random.randrange(6,10,1)
+                    self.lastattack = self.livingfor
+                    self.attacking=True
+                    self.attack_4 = False
         if(self.attacking):
             if(self.level ==1):
                 if 1==self.currentphase:
@@ -249,6 +273,14 @@ class Boss(pygame.sprite.Sprite):
                     self.attacking=False
                     self.attack_3=True
                     self.currentAnimationFrame=0
+            elif(self.level==3):
+                if 1==self.currentphase:
+                    self.currentAnimationFrame+=1
+                    gfx.animate(self,1)
+                    if(self.currentAnimationFrame==60):
+                        self.attacking=False
+                        self.attack_1=True
+                        self.currentAnimationFrame=0
         
         if(self.takingdmg):
             if self.level==1 and self.currentphase is not 5:
@@ -265,14 +297,22 @@ class Boss(pygame.sprite.Sprite):
                         self.image,null = gfx.load_image("boss-art/takingdmg.png",-1)
                 if(self.counter==60):
                     self.takingdmg= False
-            if self.level==2 and self.currentphase is not 5:
+            elif self.level==2 and self.currentphase is not 5:
                 self.counter+=1
                 if self.counter%5==0:
                     self.image,null = gfx.load_image("coach-art/boss.png",-1)
                 elif self.counter%5==1:
                     self.image,null = gfx.load_image("coach-art/boss-hit.png",-1)
                 if(self.counter==60):
-                    self.takingdmg= False
+                    self.takingdmg = False
+            elif self.level==3:
+                self.counter+=1
+                if self.counter%5==0:
+                    self.image,null = gfx.load_image("boss-fleisig/boss.png",-1)
+                elif self.counter%5==1:
+                    self.image,null = gfx.load_image("boss-fleisig/takingdmg.png",-1)
+                if(self.counter==60):
+                    self.takingdmg = False
     def walkTo(self,x,y):
         self.moving = True
         
@@ -304,4 +344,4 @@ class Boss(pygame.sprite.Sprite):
             self.counter =0
             self.hp -= dmg
     def die(self):
-        print "Level 1 Boss Dead"
+        print "Boss Dead"

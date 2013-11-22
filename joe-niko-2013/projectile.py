@@ -51,6 +51,8 @@ class Projectile(pygame.sprite.Sprite):
         elif self.proj_type == 'fireball':
             v =5
             self.dy*=-1
+        elif self.proj_type == 'fire':
+            v=0
         else:
             v = 5
         self.dx*=v
@@ -127,6 +129,9 @@ class Projectile(pygame.sprite.Sprite):
             else:
                 self.image = pygame.image.load('sprites/coach-art/stopmoving.png').convert_alpha()
             self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
+        elif self.proj_type == 'fire':
+            self.image = pygame.image.load('sprites/fire.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
         else:
             print "Projectile type not recognized: ",self.proj_type
             
@@ -154,6 +159,10 @@ class Projectile(pygame.sprite.Sprite):
             if(self.frames >= 8*60):
                 print "killing"
                 self.kill()
+        elif self.proj_type=='fire':
+            self.frames+=1
+            if(self.frames >= 60):
+                self.kill()
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))
@@ -170,7 +179,7 @@ class Projectile(pygame.sprite.Sprite):
             else:
                 self.placeholder[1] -= int(self.placeholder[1])
 
-        if self.frames >= 15*60:
+        if self.frames >= 15*60: #Max projectile time out
             self.kill()
 
         
@@ -178,7 +187,7 @@ class Projectile(pygame.sprite.Sprite):
             if self.currentAnimationType is not 0 and self.proj_type=='paint':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
+            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 7 and self.proj_type=='art') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
                 self.currentAnimationFrame+=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
