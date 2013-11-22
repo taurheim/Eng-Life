@@ -124,7 +124,18 @@ class Projectile(pygame.sprite.Sprite):
             self.image = pygame.image.load('sprites/football/frame0.png').convert_alpha()
             self.rect = pygame.Rect(mobPos[0],mobPos[1],32,32)
             self.frames=1
-        else:
+        elif self.proj_type == 'yell':
+            if(self.extra):
+                self.image = pygame.image.load('sprites/coach-art/keepmoving.png').convert_alpha()
+            else:
+                self.image = pygame.image.load('sprites/coach-art/stopmoving.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
+        elif self.proj_type == 'fire':
+            self.image = pygame.image.load('sprites/fire.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
+        elif self.proj_type == 'fireseed':
+            self.image = pygame.image.load('sprites/fireseed.png').convert_alpha()
+            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)        else:
             print "Projectile type not recognized: ",self.proj_type
             
 
@@ -146,6 +157,16 @@ class Projectile(pygame.sprite.Sprite):
             self.frames+=1
             if(self.frames >= self.extra[1]):
                 self.kill()
+        elif self.proj_type=='yell':
+            self.frames+=1
+            if(self.frames >= 8*60):
+                print "killing"
+                self.kill()
+        elif self.proj_type=='fire':
+            self.frames+=1
+            if(self.frames >= 60):
+                self.kill()
+
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
         self.rect.move_ip(int(self.placeholder[0]),int(self.placeholder[1]))
@@ -162,7 +183,7 @@ class Projectile(pygame.sprite.Sprite):
             else:
                 self.placeholder[1] -= int(self.placeholder[1])
 
-        if self.frames >= 90:
+        if self.frames >= 15*60: #Max projectile time out
             self.kill()
 
         
@@ -173,7 +194,7 @@ class Projectile(pygame.sprite.Sprite):
       #      if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art'):
                 
             if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
-                self.currentAnimationFrame=1
+                self.currentAnimationFrame+=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
             if self.proj_type == 'art':
