@@ -152,6 +152,7 @@ class Projectile(pygame.sprite.Sprite):
         elif self.proj_type=='yell':
             self.frames+=1
             if(self.frames >= 8*60):
+                print "killing"
                 self.kill()
         self.placeholder[0] += self.dx
         self.placeholder[1] += self.dy
@@ -169,7 +170,7 @@ class Projectile(pygame.sprite.Sprite):
             else:
                 self.placeholder[1] -= int(self.placeholder[1])
 
-        if self.frames >= 90:
+        if self.frames >= 15*60:
             self.kill()
 
         
@@ -177,12 +178,8 @@ class Projectile(pygame.sprite.Sprite):
             if self.currentAnimationType is not 0 and self.proj_type=='paint':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-<<<<<<< HEAD
-            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art'):
-=======
-            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
->>>>>>> 9b94d262fa4ee043f26358e59b448e9f70bab336
-                self.currentAnimationFrame=1
+            if (self.currentAnimationFrame == 8 and self.proj_type=='paint') or (self.currentAnimationFrame==11 and self.proj_type=='boomer') or (self.currentAnimationFrame == 8 and self.proj_type=='art') or (self.currentAnimationFrame==12 and self.proj_type=='boss_football'):
+                self.currentAnimationFrame+=1
                 gfx.animate(self,self.currentAnimationType)
                 self.currentAnimationFrame=0
             if self.proj_type == 'art':
