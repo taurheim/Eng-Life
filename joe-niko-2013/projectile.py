@@ -135,7 +135,8 @@ class Projectile(pygame.sprite.Sprite):
             self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)
         elif self.proj_type == 'fireseed':
             self.image = pygame.image.load('sprites/fireseed.png').convert_alpha()
-            self.rect = pygame.Rect (mobPos[0],mobPos[1],0,0)        else:
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],0,0)
+        else:
             print "Projectile type not recognized: ",self.proj_type
             
 
@@ -200,10 +201,10 @@ class Projectile(pygame.sprite.Sprite):
             if self.proj_type == 'art':
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-            if self.proj_type == 'commerce' or self.proj_type == 'art' and (not self.currentAnimationFrame == 8):
+            if self.proj_type == 'commerce' and (not self.currentAnimationFrame==8) or self.proj_type == 'art' and (not self.currentAnimationFrame == 8):
                 self.currentAnimationFrame += 1
                 gfx.animate(self,self.currentAnimationType)
-            elif self.proj_type == 'commerce' or self.proj_type == 'art' and self.currentAnimationFrame == 8:
+            elif self.proj_type == 'commerce' and self.currentAnimationFrame==8 or self.proj_type == 'art' and self.currentAnimationFrame == 8:
                 self.currentAnimationFrame = 1
                 gfx.animate(self,self.currentAnimationType)
                 
