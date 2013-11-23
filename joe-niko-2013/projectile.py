@@ -122,7 +122,7 @@ class Projectile(pygame.sprite.Sprite):
             self.rect = pygame.Rect(mobPos[0],mobPos[1],26,26)            
         elif self.proj_type == 'boss_football':
             self.image = pygame.image.load('sprites/football/frame0.png').convert_alpha()
-            self.rect = pygame.Rect(mobPos[0],mobPos[1],32,32)
+            self.rect = pygame.Rect(mobPos[0],mobPos[1],128,64)
             self.frames=1
         elif self.proj_type == 'yell':
             if(self.extra):
@@ -165,7 +165,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.kill()
         elif self.proj_type=='fire':
             self.frames+=1
-            if(self.frames >= 60):
+            if(self.frames >= 120):
                 self.kill()
 
         self.placeholder[0] += self.dx

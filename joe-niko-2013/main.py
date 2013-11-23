@@ -51,7 +51,9 @@ class Main: ## __init__, game_loop
         self.fireballs = pygame.sprite.Group() # Player projectiles
         self.fire = pygame.sprite.Group() #Fire, used for boss #3
         self.flameseeds = pygame.sprite.Group() #Fire starter, used for boss #3
-        
+
+        #Font
+        #self.kill_text = pygame.font.Font.render("0",1,(255,255,255))
         
         #inputs
         self.pressed_down = False
@@ -482,6 +484,9 @@ class Main: ## __init__, game_loop
                         self.all_sprites.add(flameseed)
                         self.flameseeds.add(flameseed)
                     self.boss.attack_4 = True
+                if(self.guy.attacking and self.boss.rect.colliderect(self.swish.createSwishBox())):
+                    self.boss.takeDamage(50)
+                    self.bossHealthChanged = True
 
 
             
@@ -493,7 +498,7 @@ class Main: ## __init__, game_loop
                     self.boss.kill()
                     self.menuScreen = menu.deathScreen(False,self.currentLevel.level)
                     self.running = False
-                    if MainObject.menuScreen.screen_loop(MainObject.screen):
+                    if self.menuScreen.screen_loop(MainObject.screen):
                         restartGame(self.currentLevel.level+1)
                         return
                     else:
@@ -507,6 +512,7 @@ class Main: ## __init__, game_loop
                 if(newpos[0]<800 and newpos[0]>0 and newpos[1]<600 and newpos[1]>0):
                     newflame = projectile.Projectile(newpos,newpos,'fire',flame.extra)
                     self.fire.remove(flame)
+                    self.projectiles.add(flame)
                     self.all_sprites.add(newflame)
                     self.fire.add(newflame)
 
@@ -561,6 +567,16 @@ class Main: ## __init__, game_loop
                         self.guy.tookDamage(10)
                         self.healthChanged = True
                         proj.die()
+                    elif proj.proj_type == 'fire':
+                        self.guy.tookDamage(2)
+                        self.healthChanged = True
+                    elif proj.proj_type == 'football':
+                        self.guy.tookDamage(10)
+                        self.healthChanged = True
+                        proj.die()
+                    elif proj.proj_type == 'boss_football':
+                        self.guy.tookDamage(5)
+                        self.healthChanged = True
                 if proj.proj_type == "boomer" and proj.extra == "back" and proj.rect.colliderect(pygame.Rect(self.boss.rect.x+200,self.boss.rect.y+130,50,50)):
                     proj.die()
                 for solid in self.Physics.collisionRects:
@@ -602,7 +618,7 @@ class Main: ## __init__, game_loop
                 if healthStr == '0':
                     self.deathScreen = menu.deathScreen(True,self.currentLevel.level)
                     self.running = False
-                    if MainObject.deathScreen.screen_loop(MainObject.screen):
+                    if self.deathScreen.screen_loop(MainObject.screen):
                         restartGame(self.currentLevel.level)
                         return
                     else:
@@ -687,7 +703,7 @@ def restartGame(levelNumber):
 #Load title screen
 #Run the game loop
 
-MainObject = Main(3)
+MainObject = Main(1)
 #import cProfile as profile
 #profile.run('MainObject.game_loop()')
 if(MainObject.titlescreen.screen_loop(MainObject.screen)):

@@ -68,7 +68,7 @@ def animate(sprite, animation):
                 filename = "Enemy-1/projectiles/frames/"+str(sprite.currentAnimationFrame)+'.png'
                 sprite.image,null = load_image(filename,-1)
             elif(sprite.proj_type == 'boomer'):
-                filename = "boss-art/boomer/palette"+str(sprite.currentAnimationFrame)+'.png'
+                filename = "boss-art/boomer/palette"+str(sprite.currentAnimationFrame%8)+'.png'
                 sprite.image,null = load_image(filename,-1)
             elif(sprite.proj_type == 'boss_football'):
                 frame = str(sprite.currentAnimationFrame)
