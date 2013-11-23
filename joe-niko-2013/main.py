@@ -63,6 +63,11 @@ class Main: ## __init__, game_loop
         self.pressed_leftmouse = False
         self.pressed_rightmouse = False
 
+        self.fireballCount = 5
+        self.fireballsChanged = False
+        self.addFireball = False
+        self.fireballTimer = 0
+
 
         #Level set up
         self.currentLevel = level.Level(levelNumber,self.background)
@@ -85,6 +90,35 @@ class Main: ## __init__, game_loop
         self.all_sprites.add(pygame.sprite.RenderPlain(self.healthBar))
         self.healthChanged = False
 
+        if self.currentLevel.level > 2:
+            self.fireball1 = pygame.sprite.Sprite()
+            self.fireball2 = pygame.sprite.Sprite()
+            self.fireball3 = pygame.sprite.Sprite()
+            self.fireball4 = pygame.sprite.Sprite()
+            self.fireball5 = pygame.sprite.Sprite()
+            pygame.sprite.Sprite.__init__(self.fireball1)
+            pygame.sprite.Sprite.__init__(self.fireball2)
+            pygame.sprite.Sprite.__init__(self.fireball3)
+            pygame.sprite.Sprite.__init__(self.fireball4)
+            pygame.sprite.Sprite.__init__(self.fireball5)
+
+            self.fireball1.image,null = gfx.load_image('engfireball.png',-1)
+            self.fireball2.image,null = gfx.load_image('engfireball.png',-1)
+            self.fireball3.image,null = gfx.load_image('engfireball.png',-1)
+            self.fireball4.image,null = gfx.load_image('engfireball.png',-1)
+            self.fireball5.image,null = gfx.load_image('engfireball.png',-1)
+            self.fireball1.rect = (200,550,32,32)
+            self.fireball2.rect = (250,550,32,32)
+            self.fireball3.rect = (300,550,32,32)
+            self.fireball4.rect = (350,550,32,32)
+            self.fireball5.rect = (400,550,32,32)
+            self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball1))
+            self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball2))
+            self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball3))
+            self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball4))
+            self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball5))
+
+
         #Health pack set up
         
         self.healthSpawnRate = 3   #Every x seconds, a pack is spawned (only if the previous pack has been picked up)
@@ -94,7 +128,6 @@ class Main: ## __init__, game_loop
         #gfx testing
         self.preloaded_gfx = gfx.preloadedgfx()
         gfx.preloaded_gfx = self.preloaded_gfx
-        print gfx.preloaded_gfx.swish_down
         #Sounds
 
         self.Sounds = pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
@@ -114,6 +147,8 @@ class Main: ## __init__, game_loop
 
         #gfx.preloadedgfx.loadbasic()
         #print gfx.preloadedgfx.swish_down
+
+        
         
         while self.running:
             tick_timer.tick(GAME_SETTINGS.GAME_SPEED) #tick
@@ -134,7 +169,7 @@ class Main: ## __init__, game_loop
             colorkey =self.foreground.get_at((0,0))   #Set transparent color
             self.foreground.set_colorkey(colorkey)
             pygame.display.flip()                     #Make it happen
-
+            
             #Check for inputs
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -161,7 +196,6 @@ class Main: ## __init__, game_loop
                         self.bossHealthBar.rect = (550,550,100,20)
                         self.all_sprites.add(pygame.sprite.RenderPlain(self.bossHealthBar))
                         self.bossHealthChanged = False
-                        print "Boss Spawned by Player"
                     elif event.key == pygame.K_SPACE:
                         self.pressed_leftmouse = True
                         
@@ -179,11 +213,13 @@ class Main: ## __init__, game_loop
                 
                 elif (event.type == pygame.MOUSEBUTTONDOWN and event.button==1): #Click
                     self.pressed_leftmouse = True
-                elif(event.type == pygame.MOUSEBUTTONDOWN and event.button==3):
+                elif(event.type == pygame.MOUSEBUTTONDOWN and event.button==3) and self.currentLevel.level > 2 and self.fireballCount > 0:
                      self.pressed_rightmouse = True
                      new_projectile = projectile.Projectile(self.guy.rect.center,pygame.mouse.get_pos(),'fireball',1)
                      self.all_sprites.add(pygame.sprite.RenderPlain(new_projectile))
                      self.fireballs.add(pygame.sprite.RenderPlain(new_projectile))
+                     self.fireballCount += -1
+                     self.fireballsChanged = True
                 elif event.type == pygame.MOUSEBUTTONUP and event.button==1:
                      self.pressed_leftmouse = False
                 elif event.type == pygame.MOUSEBUTTONUP and event.button==3:
@@ -219,6 +255,58 @@ class Main: ## __init__, game_loop
             else:
                 self.guy.moving = False #Guy is not moving
 
+
+            #Draw fireballs
+            if self.fireballsChanged:
+                if self.fireballCount == 4:
+                    self.fireball5.kill()
+                if self.fireballCount == 3:
+                    self.fireball4.kill()
+                if self.fireballCount == 2:
+                    self.fireball3.kill()
+                if self.fireballCount == 1:
+                    self.fireball2.kill()
+                if self.fireballCount == 0:
+                    self.fireball1.kill()
+                self.fireballsChanged = False
+            if self.addFireball:
+                if self.fireballCount == 4:
+                    self.fireball5 = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.fireball5)
+                    self.fireball5.image,null = gfx.load_image('engfireball.png',-1)
+                    self.fireball5.rect = (400,550,32,32)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball5))
+                    self.fireballCount += 1
+                if self.fireballCount == 3:
+                    self.fireball4 = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.fireball4)
+                    self.fireball4.image,null = gfx.load_image('engfireball.png',-1)
+                    self.fireball4.rect = (350,550,32,32)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball4))
+                    self.fireballCount += 1
+                if self.fireballCount == 2:
+                    self.fireball3 = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.fireball3)
+                    self.fireball3.image,null = gfx.load_image('engfireball.png',-1)
+                    self.fireball3.rect = (300,550,32,32)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball3))
+                    self.fireballCount += 1
+                if self.fireballCount == 1:
+                    self.fireball2 = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.fireball2)
+                    self.fireball2.image,null = gfx.load_image('engfireball.png',-1)
+                    self.fireball2.rect = (250,550,32,32)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball2))
+                    self.fireballCount += 1
+                if self.fireballCount == 0:
+                    self.fireball1 = pygame.sprite.Sprite()
+                    pygame.sprite.Sprite.__init__(self.fireball5)
+                    self.fireball1.image,null = gfx.load_image('engfireball.png',-1)
+                    self.fireball1.rect = (200,550,32,32)
+                    self.all_sprites.add(pygame.sprite.RenderPlain(self.fireball1))
+                    self.fireballCount += 1
+                self.addFireball = False
+                    
                 
             #Make player attack(), make a swish animation, make a swish collision box
             if self.pressed_leftmouse and not self.guy.attacking and self.guy.canAttack == True:
@@ -625,9 +713,20 @@ class Main: ## __init__, game_loop
                         pygame.quit()
                         
 
+            self.fireballTimer += 1
+            
             #If something needs to be done every second, put it here
             if (self.framecount == 30 or self.framecount == 60):
                 self.guy.canAttack = True
+                print self.fireballCount
+
+            if self.fireballTimer == 300 and not self.fireballCount == 5:
+                self.addFireball = True
+                self.fireballTimer = 0
+
+            
+                
+                
             
             if(self.framecount==60):
                 self.secondsPassed += 1
@@ -638,11 +737,11 @@ class Main: ## __init__, game_loop
                     self.all_sprites.add(pygame.sprite.RenderPlain(pack))
                     self.health.add(pygame.sprite.RenderPlain(pack))
                     self.spawnHealth = False
-                    print "Health spawned at "+str(X)+","+str(Y)
                     
 
                 
-                print self.killCount
+
+                
                 if(self.killCount>=2 and self.spawnMobs):
                     self.spawnMobs=False
                     self.boss = level.Boss(1000,-250,self.currentLevel.level)
@@ -667,7 +766,6 @@ class Main: ## __init__, game_loop
                 for enemy in self.mobs:
                         playerPos = [self.guy.rect.x, self.guy.rect.y]
                         selfPos = [enemy.rect.x, enemy.rect.y]
-                        print self.currentLevel.mobType
                         proj = projectile.Projectile(playerPos, selfPos, self.currentLevel.mobType,enemy.direction)
                         enemy.currentAnimationType = 1
                         enemy.currentAnimationFrame = 0
@@ -683,7 +781,8 @@ class Main: ## __init__, game_loop
                     self.newmob = ai.Mob(spawnloc[0],spawnloc[1], self.currentLevel.mobType)
                     self.mobs.add(pygame.sprite.RenderPlain(self.newmob))
                     self.all_sprites.add(pygame.sprite.RenderPlain(self.newmob))
-                    print "Mob Spawned"
+
+                    
     def changeLevel(self):
         pass
 
